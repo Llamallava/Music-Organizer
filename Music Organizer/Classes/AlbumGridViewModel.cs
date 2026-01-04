@@ -2,20 +2,21 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Music_Organizer;
-using System.Windows.Input;
+using Music_Organizer.Classes;
 
-public class AlbumGridViewModel
+public sealed class AlbumGridViewModel
 {
-    private readonly Action<AlbumItem> _navigateToAlbum;
+    private readonly Action<AlbumItem> _openEditor;
 
     public ObservableCollection<AlbumItem> AlbumItems { get; }
-    public ICommand OpenAlbumCommand { get; }
+    public RelayCommand<AlbumItem> OpenAlbumCommand { get; }
 
-    public AlbumGridViewModel(Action<AlbumItem> navigateToAlbum)
+    public AlbumGridViewModel(Action<AlbumItem> openEditor)
     {
-        _navigateToAlbum = navigateToAlbum;
+        _openEditor = openEditor;
 
         AlbumItems = new ObservableCollection<AlbumItem>();
 
@@ -25,39 +26,32 @@ public class AlbumGridViewModel
                 if (album == null)
                     return;
 
-                _navigateToAlbum?.Invoke(album);
+                _openEditor?.Invoke(album);
             });
 
-        LoadAlbumsFromCoversFolder();
+        LoadFromDatabase();
     }
 
-    private void LoadAlbumsFromCoversFolder()
+    private void LoadFromDatabase()
     {
-        var appRoot = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Music Organizer"
-        );
+        using var db = new MusicOrganizerDbContext();
 
-        var coversPath = Path.Combine(appRoot, "Covers");
+        var albums = db.Albums
+            .OrderBy(a => a.ArtistName)
+            .ThenBy(a => a.AlbumTitle)
+            .ToList();
 
-        if (!Directory.Exists(AppPaths.Covers))
-            return;
+        AlbumItems.Clear();
 
-        var imageFiles = Directory
-            .EnumerateFiles(AppPaths.Covers)
-            .Where(f =>
-                f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                f.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                f.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(f => f);
-
-        foreach (var file in imageFiles)
+        foreach (var a in albums)
         {
+            var coverPath = Path.Combine(AppPaths.Covers, a.CoverFileName);
+
             AlbumItems.Add(new AlbumItem
             {
-                AlbumId = Guid.NewGuid(),
-                CoverImage = LoadImage(file),
-                DisplayText = Path.GetFileNameWithoutExtension(file)
+                AlbumId = a.AlbumId,
+                DisplayText = $"{a.AlbumTitle} - {a.ArtistName}",
+                CoverImage = File.Exists(coverPath) ? LoadImage(coverPath) : null
             });
         }
     }

@@ -2,6 +2,7 @@
 using System.Data;
 using System.IO;
 using System.Windows;
+using Music_Organizer.Classes;
 
 namespace Music_Organizer
 {
@@ -16,7 +17,9 @@ namespace Music_Organizer
 
             Directory.CreateDirectory(AppPaths.AppRoot);
             Directory.CreateDirectory(AppPaths.Covers);
+
+            using var db = new MusicOrganizerDbContext();
+            db.Database.EnsureCreated();
         }
     }
-
 }

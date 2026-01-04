@@ -25,6 +25,10 @@
             <Button Content="Fetch"
                     Width="110"
                     Click="Fetch_Click"/>
+            <Button Content="Save"
+                    Width="110"
+                    Margin="10,0,0,0"
+                    Click="Save_Click"/>
         </StackPanel>
 
         <TextBlock x:Name="StatusText"

@@ -50,7 +50,12 @@ public sealed class AlbumMetadataFetcher : IDisposable
 
         await Task.Delay(1100, cancellationToken);
 
-        var cover = await TryGetFrontCoverAsync(release.Id, cancellationToken);
+        var coverBytes = await TryGetFrontCoverAsync(release.Id, cancellationToken);
+
+        BitmapImage coverImage = null;
+
+        if (coverBytes != null && coverBytes.Length > 0)
+            coverImage = BytesToBitmapImage(coverBytes);
 
         return new FetchedAlbumData
         {
@@ -58,7 +63,8 @@ public sealed class AlbumMetadataFetcher : IDisposable
             ArtistName = release.ArtistCreditName ?? artistName,
             ReleaseMbid = release.Id,
             Tracks = tracks,
-            CoverImage = cover
+            CoverBytes = coverBytes,
+            CoverImage = coverImage
         };
     }
 
@@ -130,13 +136,11 @@ public sealed class AlbumMetadataFetcher : IDisposable
         return tracks;
     }
 
-    private async Task<BitmapImage> TryGetFrontCoverAsync(
+    private async Task<Byte[]> TryGetFrontCoverAsync(
         string releaseMbid,
         CancellationToken cancellationToken
     )
     {
-        // Cover Art Archive: front cover for a release.
-        // The service commonly redirects to an Internet Archive URL. :contentReference[oaicite:6]{index=6}
         var url = $"https://coverartarchive.org/release/{releaseMbid}/front";
 
         using var response = await _http.GetAsync(url, cancellationToken);
@@ -146,7 +150,7 @@ public sealed class AlbumMetadataFetcher : IDisposable
 
         var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
-        return BytesToBitmapImage(bytes);
+        return await response.Content.ReadAsByteArrayAsync(cancellationToken);
     }
 
     private static BitmapImage BytesToBitmapImage(byte[] bytes)

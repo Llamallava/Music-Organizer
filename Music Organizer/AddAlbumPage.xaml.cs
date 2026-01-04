@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Extensions.DependencyModel;
 
 namespace Music_Organizer
 {
@@ -20,11 +21,14 @@ namespace Music_Organizer
     {
         private readonly AlbumMetadataFetcher _fetcher;
         private CancellationTokenSource _cts;
+        private readonly AlbumLibraryService _library;
+        private FetchedAlbumData _lastFetched;
 
         public AddAlbumPage()
         {
             InitializeComponent();
             _fetcher = new AlbumMetadataFetcher();
+            _library = new AlbumLibraryService();
         }
 
         private async void Fetch_Click(object sender, RoutedEventArgs e)
@@ -35,6 +39,7 @@ namespace Music_Organizer
             StatusText.Text = "Fetching...";
             CoverImage.Source = null;
             TracksList.ItemsSource = null;
+            _lastFetched = null;
 
             try
             {
@@ -42,6 +47,8 @@ namespace Music_Organizer
                 var album = AlbumBox.Text?.Trim();
 
                 var data = await _fetcher.FetchAsync(artist, album, _cts.Token);
+
+                _lastFetched = data;
 
                 StatusText.Text = $"{data.AlbumTitle} — {data.ArtistName}";
                 CoverImage.Source = data.CoverImage;
@@ -54,6 +61,27 @@ namespace Music_Organizer
             catch (Exception ex)
             {
                 StatusText.Text = "Failed: " + ex.Message;
+            }
+        }
+
+        private async void Save_Click(object sender, RoutedEventArgs e)
+        {
+            if (_lastFetched == null)
+            {
+                StatusText.Text = "Nothing to save. Fetch an album first.";
+                return;
+            }
+
+            try
+            {
+                StatusText.Text = "Saving...";
+                await _library.SaveFetchedAlbumAsync(_lastFetched);
+                StatusText.Text = "Saved. Returning to Reviews...";
+                NavigationService?.GoBack();
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = "Save failed: " + ex.Message;
             }
         }
     }

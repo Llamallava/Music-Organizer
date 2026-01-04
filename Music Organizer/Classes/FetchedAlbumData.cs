@@ -11,6 +11,8 @@ namespace Music_Organizer
         public string ArtistName { get; init; }
         public string ReleaseMbid { get; init; }
         public IReadOnlyList<string> Tracks { get; init; }
+
         public ImageSource CoverImage { get; init; }
+        public byte[] CoverBytes { get; init; }
     }
 }
