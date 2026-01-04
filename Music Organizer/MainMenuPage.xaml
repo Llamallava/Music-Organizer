@@ -1,0 +1,26 @@
+﻿<Page x:Class="Music_Organizer.MainMenuPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Music_Organizer"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MainMenuPage">
+
+    <Grid>
+        <Button Click="Reviews_Click" Name="Reviews_Button" FontFamily="Agency FB" Margin="55,62,590,301" >
+            Reviews
+        </Button>
+        <Button Click="Stats_Click" Name="Stats_Button" FontFamily="Agency FB" Margin="55,182,590,181" >
+            View Stats
+        </Button>
+        <Button Click="Search_Click" Name="Search_Button" FontFamily="Agency FB" Margin="55,301,590,62" >
+            Search
+        </Button>
+
+        <TextBlock Margin="263,62,48,61" FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Center">
+    Surrender
+        </TextBlock>
+    </Grid>
+</Page>
