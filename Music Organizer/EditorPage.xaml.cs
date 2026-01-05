@@ -18,12 +18,10 @@ namespace Music_Organizer
     /// </summary>
     public partial class EditorPage : Page
     {
-        private readonly AlbumItem _album;
-        public EditorPage(AlbumItem album)
+        public EditorPage(Guid albumId)
         {
             InitializeComponent();
-            _album = album;
-            DataContext = album;
+            DataContext = new EditorPageViewModel(albumId);
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

@@ -8,28 +8,157 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="EditorPage">
 
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="16" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="360" />
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Back"
-                    Width="80"
-                    Margin="0,0,12,0"
-                    Click="Back_Click" />
-            <TextBlock Text="{Binding DisplayText}"
-                       FontSize="22"
-                       VerticalAlignment="Center" />
-        </StackPanel>
+        <!-- LEFT COLUMN -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="2"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
-                 FontSize="14"
-                 Text="(Reviews will go here later)" />
+            <!-- Album header -->
+            <StackPanel>
+                <Border Width="220"
+                        Height="220"
+                        CornerRadius="10"
+                        ClipToBounds="True"
+                        HorizontalAlignment="Left">
+                    <Image Source="{Binding CoverImage}"
+                           Stretch="UniformToFill" />
+                </Border>
+
+                <TextBlock Text="{Binding AlbumTitle}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,10,0,0"
+                           TextWrapping="Wrap" />
+
+                <TextBlock Text="{Binding ArtistName}"
+                           FontSize="13"
+                           Opacity="0.8"
+                           Margin="0,2,0,0"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+            <!-- Track list -->
+            <Border Grid.Row="2"
+                    BorderThickness="1"
+                    BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                    CornerRadius="8"
+                    Padding="6">
+
+                <ListBox ItemsSource="{Binding Tabs}"
+                         SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
+                         BorderThickness="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="6"
+                                    Padding="8"
+                                    Margin="0,0,0,6">
+                                <TextBlock Text="{Binding DisplayName}"
+                                           TextWrapping="Wrap" />
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Root"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="6">
+                                            <ContentPresenter />
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Root" Property="Background" Value="#11000000" />
+                                            </Trigger>
+
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Root" Property="Background" Value="#22007ACC" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                </ListBox>
+            </Border>
+        </Grid>
+
+        <!-- MIDDLE COLUMN: notes + score -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding SelectedTab.DisplayName}"
+                       FontSize="16"
+                       FontWeight="SemiBold" />
+
+            <TextBox Grid.Row="2"
+                     Text="{Binding SelectedTab.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     FontSize="14" />
+
+            <StackPanel Grid.Row="4"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <TextBlock Text="Score:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0" />
+                <TextBox Width="70"
+                         Text="{Binding SelectedTab.ScoreText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- RIGHT COLUMN: lyrics placeholder -->
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Lyrics"
+                       FontSize="16"
+                       FontWeight="SemiBold" />
+
+            <TextBox Grid.Row="2"
+                     Text="{Binding SelectedTab.Lyrics}"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     FontSize="13" />
+        </Grid>
     </Grid>
 </Page>

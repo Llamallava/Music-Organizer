@@ -30,7 +30,7 @@ namespace Music_Organizer
             if (album == null)
                 return;
 
-            NavigationService?.Navigate(new EditorPage(album));
+            NavigationService?.Navigate(new EditorPage(album.AlbumId));
         }
 
         private void AddAlbum_Button_Click(object sender, RoutedEventArgs e)
