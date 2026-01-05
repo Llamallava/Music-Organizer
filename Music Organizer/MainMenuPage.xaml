@@ -8,19 +8,60 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainMenuPage">
 
-    <Grid>
-        <Button Click="Reviews_Click" Name="Reviews_Button" FontFamily="Agency FB" Margin="55,62,590,301" >
+    <Grid Background="DimGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock
+        Grid.Row="1"
+        Grid.Column="1"
+        FontSize="72"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Bottom"
+        Text="Surrender"/>
+
+        <Button
+        Grid.Row="3"
+        Click="Reviews_Click"
+        FontFamily="Agency FB"
+        Width="200"
+        Height="60"
+        HorizontalAlignment="Left">
             Reviews
         </Button>
-        <Button Click="Stats_Click" Name="Stats_Button" FontFamily="Agency FB" Margin="55,182,590,181" >
+
+        <Button
+        Grid.Row="5"
+        Click="Stats_Click"
+        FontFamily="Agency FB"
+        Width="200"
+        Height="60"
+        HorizontalAlignment="Left">
             View Stats
         </Button>
-        <Button Click="Search_Click" Name="Search_Button" FontFamily="Agency FB" Margin="55,301,590,62" >
+
+        <Button
+        Grid.Row="6"
+        
+        Click="Search_Click"
+        FontFamily="Agency FB"
+        Width="200"
+        Height="60"
+        VerticalAlignment="Top"
+        HorizontalAlignment="Left"
+        Margin="0,20,0,0">
             Search
         </Button>
-
-        <TextBlock Margin="263,62,48,61" FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Center">
-    Surrender
-        </TextBlock>
     </Grid>
 </Page>

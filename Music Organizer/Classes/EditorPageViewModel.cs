@@ -6,10 +6,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Music_Organizer.Classes;
 using Music_Organizer.Data;
 
-namespace Music_Organizer
+namespace Music_Organizer.Classes
 {
     public sealed class EditorPageViewModel : INotifyPropertyChanged
     {

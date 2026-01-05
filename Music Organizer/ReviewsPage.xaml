@@ -8,49 +8,63 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ReviewsPage">
     <Grid Background="DimGray">
-        <Button Name="AddAlbum_Button" Click="AddAlbum_Button_Click" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button
+        Grid.Row="0"
+        Name="AddAlbum_Button"
+        Click="AddAlbum_Button_Click"
+        HorizontalAlignment="Left"
+        Margin="8">
             Add Album
         </Button>
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+
+        <ScrollViewer
+        Grid.Row="1"
+        VerticalScrollBarVisibility="Auto"
+        HorizontalScrollBarVisibility="Disabled"
+        Padding="8">
 
             <ItemsControl ItemsSource="{Binding AlbumItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="4" />
+                        <UniformGrid Columns="4"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Margin="4"
-        Padding="0"
-        Background="Transparent"
-        BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-        BorderThickness="1"
-        FocusVisualStyle="{x:Null}"
-        VerticalAlignment="Top"
-        Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-        CommandParameter="{Binding}">
+                        <Button
+                        Margin="4"
+                        Padding="0"
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                        BorderThickness="1"
+                        FocusVisualStyle="{x:Null}"
+                        VerticalAlignment="Top"
+                        Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding}">
                             <StackPanel Width="140">
-                                <Border Width="140"
-                Height="140"
-                CornerRadius="6"
-                ClipToBounds="True">
-                                    <Image Source="{Binding CoverImage}"
-                   Stretch="UniformToFill"
-                   SnapsToDevicePixels="True"
-                   UseLayoutRounding="True" />
+                                <Border Width="140" Height="140" CornerRadius="6" ClipToBounds="True">
+                                    <Image
+                                    Source="{Binding CoverImage}"
+                                    Stretch="UniformToFill"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True"/>
                                 </Border>
 
-                                <TextBlock Margin="0,6,0,0"
-                   Text="{Binding DisplayText}"
-                   TextWrapping="Wrap"
-                   TextTrimming="CharacterEllipsis"
-                   FontSize="11"
-                   HorizontalAlignment="Center"
-                   TextAlignment="Center"
-                   MaxHeight="34" />
+                                <TextBlock
+                                Margin="0,6,0,0"
+                                Text="{Binding DisplayText}"
+                                TextWrapping="Wrap"
+                                TextTrimming="CharacterEllipsis"
+                                FontSize="11"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"
+                                MaxHeight="34"/>
                             </StackPanel>
                         </Button>
                     </DataTemplate>
