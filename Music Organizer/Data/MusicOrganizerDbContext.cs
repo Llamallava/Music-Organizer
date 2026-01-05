@@ -41,6 +41,6 @@ namespace Music_Organizer.Data
             modelBuilder.Entity<TrackEntity>()
                 .Property(t => t.Title)
                 .IsRequired();
-            }
+        }
     }
 }

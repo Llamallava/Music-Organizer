@@ -38,11 +38,11 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button
-                        Margin="4"
+                        Margin="6"
                         Padding="0"
                         Background="Transparent"
                         BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-                        BorderThickness="1"
+                        BorderThickness="0"
                         FocusVisualStyle="{x:Null}"
                         VerticalAlignment="Top"
                         Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"

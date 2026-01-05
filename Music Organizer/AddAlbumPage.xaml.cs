@@ -76,13 +76,17 @@ namespace Music_Organizer
             {
                 StatusText.Text = "Saving...";
                 await _library.SaveFetchedAlbumAsync(_lastFetched);
-                StatusText.Text = "Saved. Returning to Reviews...";
-                NavigationService?.GoBack();
+                StatusText.Text = "Saved.";
             }
             catch (Exception ex)
             {
                 StatusText.Text = "Save failed: " + ex.Message;
             }
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new ReviewsPage());
         }
     }
 }
