@@ -28,6 +28,21 @@ namespace Music_Organizer.Lyrics
 
             text = Regex.Replace(
                 text,
+                @"\A\s*\d+\s+Contributors?\b[^\r\n]*\r?\n+",
+                string.Empty,
+                RegexOptions.IgnoreCase);
+
+            // Some pages have a short header blob that includes "... Lyrics" near the top.
+            // Remove it if it appears very early, without requiring the contributors line to exist.
+            text = Regex.Replace(
+                text,
+                @"\A\s*.*?\bLyrics\b\s*\r?\n+",
+                string.Empty,
+                RegexOptions.IgnoreCase | RegexOptions.Singleline
+            );
+
+            text = Regex.Replace(
+                text,
                 @"^\s*\d+\s+Contributors.*?\bLyrics\b",
                 string.Empty,
                 RegexOptions.IgnoreCase | RegexOptions.Singleline

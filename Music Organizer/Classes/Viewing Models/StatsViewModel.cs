@@ -6,12 +6,39 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Music_Organizer.Data;
+using System.IO;
 
 namespace Music_Organizer.Classes.Viewing_Models
 {
-    public sealed class StatsPageViewModel
+    public sealed class StatsPageViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private RankedAlbumRow _topConclusionWinner;
+        public RankedAlbumRow TopConclusionWinner
+        {
+            get => _topConclusionWinner;
+            private set
+            {
+                _topConclusionWinner = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TopConclusionWinner)));
+            }
+        }
+
+        private RankedAlbumRow _topComputedWinner;
+        public RankedAlbumRow TopComputedWinner
+        {
+            get => _topComputedWinner;
+            private set
+            {
+                _topComputedWinner = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TopComputedWinner)));
+            }
+        }
+
         public StatsPageViewModel()
         {
             TopAlbumsByConclusionScore = new ObservableCollection<RankedAlbumRow>();
@@ -22,22 +49,23 @@ namespace Music_Organizer.Classes.Viewing_Models
         }
 
         public ObservableCollection<RankedAlbumRow> TopAlbumsByConclusionScore { get; }
-
         public ObservableCollection<RankedAlbumRow> TopAlbumsByComputedScore { get; }
-
         public ObservableCollection<RankedSongRow> TopSongsByScore { get; }
 
         private void Load()
         {
             using var db = new MusicOrganizerDbContext();
 
-            // Load base metadata
+            // You need *some* way to get a cover for each album.
+            // Example assumes you store a file path in Albums.CoverImagePath.
+            // If your schema differs (byte[] blob, URI, etc.), swap this part accordingly.
             var albums = db.Albums
                 .Select(a => new
                 {
                     a.AlbumId,
                     a.AlbumTitle,
-                    a.ArtistName
+                    a.ArtistName,
+                    CoverImagePath = Path.Combine(AppPaths.Covers, a.CoverFileName)
                 })
                 .ToList();
 
@@ -69,13 +97,37 @@ namespace Music_Organizer.Classes.Viewing_Models
                 })
                 .ToList();
 
-            // Index helpers
             var albumDisplayById = albums.ToDictionary(
                 a => a.AlbumId,
                 a => a.AlbumTitle + " - " + a.ArtistName
             );
 
-            // 1) Top 10 albums by conclusion score (user entered)
+            var albumCoverPathById = albums.ToDictionary(
+                a => a.AlbumId,
+                a => a.CoverImagePath
+            );
+
+            ImageSource TryLoadCover(Guid albumId)
+            {
+                if (!albumCoverPathById.TryGetValue(albumId, out var path))
+                    return null;
+
+                if (string.IsNullOrWhiteSpace(path))
+                    return null;
+
+                if (!File.Exists(path))
+                    return null;
+
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.UriSource = new Uri(path, UriKind.Absolute);
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            }
+
+            // 1) Top 10 albums by conclusion score
             var topConclusion = conclusions
                 .Where(c => c.Score.HasValue)
                 .Select(c => new
@@ -103,12 +155,14 @@ namespace Music_Organizer.Classes.Viewing_Models
                     Score = row.Score,
                     ScoreText = row.Score.ToString("0.##", CultureInfo.InvariantCulture),
                     TracksUsed = 0,
-                    TracksUsedText = ""
+                    TracksUsedText = "",
+                    CoverImage = TryLoadCover(row.AlbumId)
                 });
             }
 
-            // 2) Top 10 albums by computed score (avg of song scores)
-            // Only include tracks that actually have a score.
+            TopConclusionWinner = TopAlbumsByConclusionScore.FirstOrDefault();
+
+            // 2) Top 10 albums by computed score (avg of song scores), excluding interludes
             var computed = trackReviews
                 .Where(r => r.Score.HasValue && !r.IsInterlude)
                 .GroupBy(r => r.AlbumId)
@@ -138,12 +192,14 @@ namespace Music_Organizer.Classes.Viewing_Models
                     Score = row.Avg,
                     ScoreText = row.Avg.ToString("0.##", CultureInfo.InvariantCulture),
                     TracksUsed = row.TracksUsed,
-                    TracksUsedText = row.TracksUsed.ToString(CultureInfo.InvariantCulture)
+                    TracksUsedText = row.TracksUsed.ToString(CultureInfo.InvariantCulture),
+                    CoverImage = TryLoadCover(row.AlbumId)
                 });
             }
 
-            // 3) Top 10 songs by score
-            // Join reviews to track title + album display
+            TopComputedWinner = TopAlbumsByComputedScore.FirstOrDefault();
+
+            // 3) Top 10 songs by score (excluding interludes)
             var trackTitleById = tracks.ToDictionary(
                 t => t.TrackId,
                 t => t.Title

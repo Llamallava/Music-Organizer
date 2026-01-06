@@ -114,7 +114,7 @@ namespace Music_Organizer.Classes
             get
             {
                 if (IsConclusion)
-                    return false;
+                    return true;
 
                 return !IsInterlude;
             }

@@ -14,5 +14,7 @@ namespace Music_Organizer.Data
         public ImageSource CoverImage {  get; set; }
 
         public string DisplayText { get; set; }
+        public string AlbumTitle { get; set; }
+        public string ArtistName { get; set; }
     }
 }

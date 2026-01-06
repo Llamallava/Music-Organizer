@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 
 namespace Music_Organizer.Classes.Viewing_Models
 {
@@ -13,6 +14,8 @@ namespace Music_Organizer.Classes.Viewing_Models
         public string ScoreText { get; init; }
         public int TracksUsed { get; init; }
         public string TracksUsedText { get; init; }
+
+        public ImageSource CoverImage { get; init; }
     }
 
     public sealed class RankedSongRow

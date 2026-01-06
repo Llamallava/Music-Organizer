@@ -13,14 +13,29 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button
-        Grid.Row="0"
+        <Grid Grid.Row="0" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button
+        Grid.Column="0"
         Name="AddAlbum_Button"
         Click="AddAlbum_Button_Click"
-        HorizontalAlignment="Left"
-        Margin="8">
-            Add Album
-        </Button>
+        HorizontalAlignment="Left">
+                Add Album
+            </Button>
+
+            <TextBox
+        Grid.Column="2"
+        Height="30"
+        VerticalContentAlignment="Center"
+        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+        />
+        </Grid>
+
 
         <ScrollViewer
         Grid.Row="1"
@@ -31,45 +46,48 @@
             <ItemsControl ItemsSource="{Binding AlbumItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Columns="4"/>
+                        <WrapPanel IsItemsHost="True"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button
-                        Margin="6"
-                        Padding="0"
-                        Background="Transparent"
-                        BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-                        BorderThickness="0"
-                        FocusVisualStyle="{x:Null}"
-                        VerticalAlignment="Top"
-                        Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                        CommandParameter="{Binding}">
+                Margin="6"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                FocusVisualStyle="{x:Null}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                CommandParameter="{Binding}">
+
+                            <!-- Make the button size match the visual content -->
                             <StackPanel Width="140">
                                 <Border Width="140" Height="140" CornerRadius="6" ClipToBounds="True">
                                     <Image
-                                    Source="{Binding CoverImage}"
-                                    Stretch="UniformToFill"
-                                    SnapsToDevicePixels="True"
-                                    UseLayoutRounding="True"/>
+                            Source="{Binding CoverImage}"
+                            Stretch="UniformToFill"
+                            SnapsToDevicePixels="True"
+                            UseLayoutRounding="True"/>
                                 </Border>
 
                                 <TextBlock
-                                Margin="0,6,0,0"
-                                Text="{Binding DisplayText}"
-                                TextWrapping="Wrap"
-                                TextTrimming="CharacterEllipsis"
-                                FontSize="11"
-                                HorizontalAlignment="Center"
-                                TextAlignment="Center"
-                                MaxHeight="34"/>
+                        Margin="0,6,0,0"
+                        Text="{Binding DisplayText}"
+                        TextWrapping="Wrap"
+                        TextTrimming="CharacterEllipsis"
+                        FontSize="11"
+                        HorizontalAlignment="Center"
+                        TextAlignment="Center"
+                        MaxHeight="34"/>
                             </StackPanel>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
         </ScrollViewer>
     </Grid>
 </Page>
