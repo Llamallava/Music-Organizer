@@ -11,8 +11,8 @@ using Music_Organizer.Data;
 namespace Music_Organizer.Migrations
 {
     [DbContext(typeof(MusicOrganizerDbContext))]
-    [Migration("20260106033719_AddInterludeFlag")]
-    partial class AddInterludeFlag
+    [Migration("20260106035240_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

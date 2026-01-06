@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +19,12 @@ namespace Music_Organizer.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            Directory.CreateDirectory(AppPaths.AppRoot);
+            Directory.CreateDirectory(AppPaths.Covers);
+            Directory.CreateDirectory(AppPaths.Lyrics);
+
             optionsBuilder.UseSqlite("Data Source=" + AppPaths.Database);
-            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

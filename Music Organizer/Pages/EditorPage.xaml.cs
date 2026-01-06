@@ -57,9 +57,9 @@ namespace Music_Organizer
         {
             score = 0.0;
 
-            if (string.IsNullOrWhiteSpace(input))
+            if (input == string.Empty)
             {
-                return false;
+                return true;
             }
 
             if (!double.TryParse(input, out score))
