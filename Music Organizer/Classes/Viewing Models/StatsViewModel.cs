@@ -56,7 +56,8 @@ namespace Music_Organizer.Classes.Viewing_Models
                 {
                     r.TrackId,
                     r.AlbumId,
-                    r.Score
+                    r.Score,
+                    r.IsInterlude
                 })
                 .ToList();
 
@@ -109,7 +110,7 @@ namespace Music_Organizer.Classes.Viewing_Models
             // 2) Top 10 albums by computed score (avg of song scores)
             // Only include tracks that actually have a score.
             var computed = trackReviews
-                .Where(r => r.Score.HasValue)
+                .Where(r => r.Score.HasValue && !r.IsInterlude)
                 .GroupBy(r => r.AlbumId)
                 .Select(g => new
                 {
@@ -149,7 +150,7 @@ namespace Music_Organizer.Classes.Viewing_Models
             );
 
             var topSongs = trackReviews
-                .Where(r => r.Score.HasValue)
+                .Where(r => r.Score.HasValue && !r.IsInterlude)
                 .Select(r => new
                 {
                     r.TrackId,

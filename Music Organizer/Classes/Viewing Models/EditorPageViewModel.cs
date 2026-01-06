@@ -19,6 +19,7 @@ namespace Music_Organizer.Classes
         private TrackTabViewModel _selectedTab;
         private readonly Music_Organizer.Lyrics.ILyricsProvider _lyricsProvider;
         private System.Threading.CancellationTokenSource _lyricsCts;
+        public RelayCommand ToggleInterludeCommand { get; }
 
 
         public EditorPageViewModel(System.Guid albumId) : this(albumId, new Music_Organizer.Lyrics.DefaultLyricsProvider())
@@ -29,6 +30,7 @@ namespace Music_Organizer.Classes
             AlbumId = albumId;
             Tabs = new System.Collections.ObjectModel.ObservableCollection<TrackTabViewModel>();
             SaveCommand = new RelayCommand(Save);
+            ToggleInterludeCommand = new RelayCommand(ToggleInterlude);
 
             _lyricsProvider = lyricsProvider;
 
@@ -50,15 +52,17 @@ namespace Music_Organizer.Classes
             get => _selectedTab;
             set
             {
-                if (object.ReferenceEquals(value, _selectedTab))
+                if (ReferenceEquals(value, _selectedTab))
                     return;
 
                 _selectedTab = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanToggleInterlude));
 
                 LoadLyricsForSelectedTab();
             }
         }
+
 
         public string AlbumTitle
         {
@@ -168,6 +172,9 @@ namespace Music_Organizer.Classes
                     tab.ScoreText = review.Score.HasValue
                         ? review.Score.Value.ToString(CultureInfo.InvariantCulture)
                         : "";
+                    tab.IsInterlude = review.IsInterlude;
+                    if (tab.IsInterlude)
+                        tab.ScoreText = "";
                 }
 
                 Tabs.Add(tab);
@@ -238,13 +245,18 @@ namespace Music_Organizer.Classes
                         AlbumId = AlbumId,
                         TrackId = trackId,
                         Notes = tab.Notes ?? "",
-                        Score = parsedScore
+                        IsInterlude = tab.IsInterlude,
+                        Score = tab.IsInterlude ? null : parsedScore
                     });
                 }
                 else
                 {
                     existingTrackReview.Notes = tab.Notes ?? "";
-                    existingTrackReview.Score = parsedScore;
+                    existingTrackReview.IsInterlude = tab.IsInterlude;
+
+                    existingTrackReview.Score = tab.IsInterlude
+                        ? null
+                        : parsedScore;
                 }
             }
 
@@ -325,6 +337,33 @@ namespace Music_Organizer.Classes
             catch
             {
                 tab.Lyrics = "Lyrics unavailable.";
+            }
+        }
+        public bool CanToggleInterlude
+        {
+            get
+            {
+                if (SelectedTab == null)
+                    return false;
+
+                return !SelectedTab.IsConclusion;
+            }
+        }
+
+        private void ToggleInterlude()
+        {
+            if (SelectedTab == null)
+                return;
+
+            if (SelectedTab.IsConclusion)
+                return;
+
+            SelectedTab.IsInterlude = !SelectedTab.IsInterlude;
+
+            if (SelectedTab.IsInterlude)
+            {
+                // Interludes cannot be scored.
+                SelectedTab.ScoreText = "";
             }
         }
 

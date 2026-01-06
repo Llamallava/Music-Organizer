@@ -12,6 +12,7 @@ namespace Music_Organizer.Classes
         private string _notes;
         private string _lyrics;
         private string _scoreText;
+        private bool _isInterlude;
 
         public TrackTabViewModel(
         System.Guid? trackId,
@@ -93,9 +94,39 @@ namespace Music_Organizer.Classes
                 OnPropertyChanged();
             }
         }
+        public bool IsInterlude
+        {
+            get => _isInterlude;
+            set
+            {
+                if (value == _isInterlude)
+                    return;
 
+                _isInterlude = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(InterludeButtonText));
+                OnPropertyChanged(nameof(IsScoreEnabled));
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
+        public bool IsScoreEnabled
+        {
+            get
+            {
+                if (IsConclusion)
+                    return false;
 
+                return !IsInterlude;
+            }
+        }
+
+        public string InterludeButtonText
+        {
+            get
+            {
+                return IsInterlude ? "Unmark interlude" : "Mark song as interlude";
+            }
+        }
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
