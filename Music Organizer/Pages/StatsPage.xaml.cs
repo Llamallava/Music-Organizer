@@ -25,5 +25,10 @@ namespace Music_Organizer.Pages
             DataContext = new StatsPageViewModel();
 
         }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new MainMenuPage());
+        }
     }
 }

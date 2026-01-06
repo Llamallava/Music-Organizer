@@ -7,41 +7,58 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ReviewsPage">
+
     <Grid Background="DimGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Header -->
         <Grid Grid.Row="0" Margin="8">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- Back Button -->
             <Button
-        Grid.Column="0"
-        Name="AddAlbum_Button"
-        Click="AddAlbum_Button_Click"
-        HorizontalAlignment="Left">
+                Grid.Column="0"
+                Name="Back_Button"
+                Content="←"
+                Width="44"
+                Height="34"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Click="Back_Click"
+                ToolTip="Back"/>
+
+            <!-- Add Album Button -->
+            <Button
+                Grid.Column="2"
+                Name="AddAlbum_Button"
+                Click="AddAlbum_Button_Click"
+                HorizontalAlignment="Left">
                 Add Album
             </Button>
 
+            <!-- Search Box -->
             <TextBox
-        Grid.Column="2"
-        Height="30"
-        VerticalContentAlignment="Center"
-        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-        />
+                Grid.Column="4"
+                Height="30"
+                VerticalContentAlignment="Center"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
-
+        <!-- Album Grid -->
         <ScrollViewer
-        Grid.Row="1"
-        VerticalScrollBarVisibility="Auto"
-        HorizontalScrollBarVisibility="Disabled"
-        Padding="8">
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            Padding="8">
 
             <ItemsControl ItemsSource="{Binding AlbumItems}">
                 <ItemsControl.ItemsPanel>
@@ -53,41 +70,42 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button
-                Margin="6"
-                Padding="0"
-                Background="Transparent"
-                BorderThickness="0"
-                FocusVisualStyle="{x:Null}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                CommandParameter="{Binding}">
+                            Margin="6"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            FocusVisualStyle="{x:Null}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}">
 
-                            <!-- Make the button size match the visual content -->
                             <StackPanel Width="140">
-                                <Border Width="140" Height="140" CornerRadius="6" ClipToBounds="True">
+                                <Border Width="140"
+                                        Height="140"
+                                        CornerRadius="6"
+                                        ClipToBounds="True">
                                     <Image
-                            Source="{Binding CoverImage}"
-                            Stretch="UniformToFill"
-                            SnapsToDevicePixels="True"
-                            UseLayoutRounding="True"/>
+                                        Source="{Binding CoverImage}"
+                                        Stretch="UniformToFill"
+                                        SnapsToDevicePixels="True"
+                                        UseLayoutRounding="True"/>
                                 </Border>
 
                                 <TextBlock
-                        Margin="0,6,0,0"
-                        Text="{Binding DisplayText}"
-                        TextWrapping="Wrap"
-                        TextTrimming="CharacterEllipsis"
-                        FontSize="11"
-                        HorizontalAlignment="Center"
-                        TextAlignment="Center"
-                        MaxHeight="34"/>
+                                    Margin="0,6,0,0"
+                                    Text="{Binding DisplayText}"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="CharacterEllipsis"
+                                    FontSize="11"
+                                    HorizontalAlignment="Center"
+                                    TextAlignment="Center"
+                                    MaxHeight="34"/>
                             </StackPanel>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
         </ScrollViewer>
     </Grid>
 </Page>

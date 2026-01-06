@@ -27,8 +27,7 @@ namespace Music_Organizer
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if (NavigationService?.CanGoBack == true)
-                NavigationService.GoBack();
+            NavigationService?.Navigate(new ReviewsPage());
         }
         private void SaveExit_Click(object sender, System.Windows.RoutedEventArgs e)
         {

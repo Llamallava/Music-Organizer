@@ -38,5 +38,10 @@ namespace Music_Organizer
         {
             NavigationService?.Navigate(new AddAlbumPage());
         }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new MainMenuPage());
+        }
     }
 }
