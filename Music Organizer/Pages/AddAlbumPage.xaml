@@ -95,30 +95,75 @@
         <!-- Main content -->
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
-                <!-- Let the cover column scale, but cap it so it doesn't get ridiculous -->
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border
-    Width="240"
-    Height="240"
-    MinWidth="180"
-    MinHeight="180"
-    MaxWidth="320"
-    MaxHeight="320"
-    CornerRadius="10"
-    ClipToBounds="True"
-    HorizontalAlignment="Left">
-                <Image x:Name="CoverImage" Stretch="UniformToFill"/>
+            <!-- Cover -->
+            <Border Width="220"
+            Height="220"
+            CornerRadius="10"
+            ClipToBounds="True">
+                <Image x:Name="CoverImage"
+               Stretch="UniformToFill"/>
             </Border>
 
+            <!-- Right side: tracks + alternatives -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <ListBox
-                x:Name="TracksList"
-                Grid.Column="2"
-                HorizontalContentAlignment="Stretch"/>
+                <!-- Track list -->
+                <ListBox x:Name="TracksList"
+                 Grid.Row="0"/>
+
+                <!-- Alternatives (collapsed by default) -->
+                <Expander x:Name="AlternativesExpander"
+                  Grid.Row="2"
+                  Header="Not what you were looking for?"
+                  IsExpanded="False">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Show next 3"
+                            Width="120"
+                            Click="ShowNext3_Click"/>
+                            <TextBlock x:Name="AltStatus"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Opacity="0.8"/>
+                        </StackPanel>
+
+                        <ListBox x:Name="AlternativesList"
+                         Grid.Row="2"
+                         MouseDoubleClick="AlternativesList_DoubleClick">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="{Binding Line1}"
+                                           FontWeight="SemiBold"
+                                           TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Line2}"
+                                           Opacity="0.75"
+                                           TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Expander>
+            </Grid>
         </Grid>
+
     </Grid>
 </Page>

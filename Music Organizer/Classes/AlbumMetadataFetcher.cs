@@ -8,7 +8,17 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Music_Organizer.Classes;
+using Music_Organizer.Data;
 using Music_Organizer;
+
+public sealed class ReleaseCandidate
+{
+    public string Id { get; init; }
+    public string Title { get; init; }
+    public string ArtistCredit { get; init; }
+    public string Date { get; init; }
+}
 
 public sealed class AlbumMetadataFetcher : IDisposable
 {
@@ -183,6 +193,7 @@ public sealed class AlbumMetadataFetcher : IDisposable
     {
         public string Id { get; set; }
         public string Title { get; set; }
+        public string Date { get; set; }
 
         public List<ArtistCredit> ArtistCredit { get; set; }
 
@@ -218,4 +229,106 @@ public sealed class AlbumMetadataFetcher : IDisposable
     {
         public string Title { get; set; }
     }
+
+    public async Task<IReadOnlyList<ReleaseCandidate>> SearchCandidatesAsync(
+    string artistName,
+    string albumTitle,
+    CancellationToken cancellationToken
+)
+    {
+        var luceneQuery =
+            "release:\"" + albumTitle + "\" AND artist:\"" + artistName + "\"";
+
+        var url =
+            "https://musicbrainz.org/ws/2/release/?" +
+            "query=" + UrlEncoder.Default.Encode(luceneQuery) +
+            "&fmt=json" +
+            "&limit=12";
+
+        using var response = await _http.GetAsync(url, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+        var payload = await JsonSerializer.DeserializeAsync<ReleaseSearchResponse>(
+            stream,
+            JsonOptions,
+            cancellationToken
+        );
+
+        if (payload == null || payload.Releases == null)
+            return Array.Empty<ReleaseCandidate>();
+
+        var candidates = payload.Releases
+            .Select(r => new ReleaseCandidate
+            {
+                Id = r.Id,
+                Title = r.Title,
+                ArtistCredit = r.ArtistCreditName,
+                Date = r.Date
+            })
+            .ToList();
+
+        return candidates;
+    }
+    public async Task<FetchedAlbumData> FetchByReleaseIdAsync(
+    string releaseMbid,
+    CancellationToken cancellationToken
+)
+    {
+        if (string.IsNullOrWhiteSpace(releaseMbid))
+            throw new ArgumentException("Release id is required.", nameof(releaseMbid));
+
+        await Task.Delay(1100, cancellationToken);
+
+        var trackTitles = await GetTrackListAsync(releaseMbid, cancellationToken);
+
+        await Task.Delay(1100, cancellationToken);
+
+        var coverBytes = await TryGetFrontCoverBytesAsync(releaseMbid, cancellationToken);
+
+        BitmapImage coverImage = null;
+        if (coverBytes != null && coverBytes.Length > 0)
+            coverImage = BytesToBitmapImage(coverBytes);
+
+        return new FetchedAlbumData
+        {
+            ReleaseMbid = releaseMbid,
+            Tracks = trackTitles,
+            CoverBytes = coverBytes,
+            CoverImage = coverImage,
+
+            // These will be filled by the caller from the chosen candidate,
+            // or you can do a release lookup for title/artist if you want.
+            AlbumTitle = "",
+            ArtistName = ""
+        };
+    }
+    public async Task<int> FetchTrackCountAsync(
+    string releaseMbid,
+    CancellationToken cancellationToken)
+    {
+        await Task.Delay(1100, cancellationToken);
+
+        var tracks = await GetTrackListAsync(releaseMbid, cancellationToken);
+        return tracks.Count;
+    }
+    private async Task<byte[]> TryGetFrontCoverBytesAsync(
+    string releaseMbid,
+    CancellationToken cancellationToken
+)
+    {
+        if (string.IsNullOrWhiteSpace(releaseMbid))
+            return null;
+
+        var url = $"https://coverartarchive.org/release/{releaseMbid}/front";
+
+        using var response = await _http.GetAsync(url, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        return await response.Content.ReadAsByteArrayAsync(cancellationToken);
+    }
+
 }

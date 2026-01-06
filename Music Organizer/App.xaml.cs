@@ -18,12 +18,10 @@ namespace Music_Organizer
 
             Directory.CreateDirectory(AppPaths.AppRoot);
             Directory.CreateDirectory(AppPaths.Covers);
+            Directory.CreateDirectory(AppPaths.Lyrics);
 
             using var db = new MusicOrganizerDbContext();
             db.Database.EnsureCreated();
-
-            var albumCount = db.Albums.Count();
-            System.Diagnostics.Debug.WriteLine("Album count: " + albumCount);
         }
     }
 }

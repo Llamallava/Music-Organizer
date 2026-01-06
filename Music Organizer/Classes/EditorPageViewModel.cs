@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -16,11 +17,27 @@ namespace Music_Organizer.Classes
         private string _artistName;
         private ImageSource _coverImage;
         private TrackTabViewModel _selectedTab;
+        private readonly Music_Organizer.Lyrics.ILyricsProvider _lyricsProvider;
+        private System.Threading.CancellationTokenSource _lyricsCts;
 
-        public EditorPageViewModel(Guid albumId)
+
+        public EditorPageViewModel(System.Guid albumId) : this(albumId, new Music_Organizer.Lyrics.DefaultLyricsProvider())
         {
-            Tabs = new ObservableCollection<TrackTabViewModel>();
-            LoadAlbum(albumId);
+        }
+        public EditorPageViewModel(System.Guid albumId, Music_Organizer.Lyrics.ILyricsProvider lyricsProvider)
+        {
+            AlbumId = albumId;
+            Tabs = new System.Collections.ObjectModel.ObservableCollection<TrackTabViewModel>();
+            SaveCommand = new RelayCommand(Save);
+
+            _lyricsProvider = lyricsProvider;
+
+            LoadAlbumAndTabs(albumId);
+        }
+
+        public Guid AlbumId
+        {
+            get;
         }
 
         public ObservableCollection<TrackTabViewModel> Tabs
@@ -33,11 +50,13 @@ namespace Music_Organizer.Classes
             get => _selectedTab;
             set
             {
-                if (ReferenceEquals(value, _selectedTab))
+                if (object.ReferenceEquals(value, _selectedTab))
                     return;
 
                 _selectedTab = value;
                 OnPropertyChanged();
+
+                LoadLyricsForSelectedTab();
             }
         }
 
@@ -47,7 +66,9 @@ namespace Music_Organizer.Classes
             private set
             {
                 if (value == _albumTitle)
+                {
                     return;
+                }
 
                 _albumTitle = value;
                 OnPropertyChanged();
@@ -60,7 +81,9 @@ namespace Music_Organizer.Classes
             private set
             {
                 if (value == _artistName)
+                {
                     return;
+                }
 
                 _artistName = value;
                 OnPropertyChanged();
@@ -73,14 +96,21 @@ namespace Music_Organizer.Classes
             private set
             {
                 if (Equals(value, _coverImage))
+                {
                     return;
+                }
 
                 _coverImage = value;
                 OnPropertyChanged();
             }
         }
 
-        private void LoadAlbum(Guid albumId)
+        public RelayCommand SaveCommand
+        {
+            get;
+        }
+
+        private void LoadAlbumAndTabs(Guid albumId)
         {
             using var db = new MusicOrganizerDbContext();
 
@@ -101,28 +131,139 @@ namespace Music_Organizer.Classes
             var coverPath = Path.Combine(AppPaths.Covers, album.CoverFileName);
             CoverImage = File.Exists(coverPath) ? LoadImage(coverPath) : null;
 
-            Tabs.Clear();
-
             var tracks = db.Tracks
                 .Where(t => t.AlbumId == albumId)
                 .OrderBy(t => t.TrackNumber)
                 .Select(t => new
                 {
+                    t.TrackId,
                     t.TrackNumber,
                     t.Title
                 })
                 .ToList();
 
+            var existingTrackReviews = db.TrackReviews
+                .Where(r => r.AlbumId == albumId)
+                .ToList();
+
+            var existingConclusion = db.AlbumConclusions
+                .FirstOrDefault(c => c.AlbumId == albumId);
+
+            Tabs.Clear();
+
             foreach (var t in tracks)
             {
-                var name = t.TrackNumber.ToString() + ". " + t.Title;
-                Tabs.Add(new TrackTabViewModel(name));
+                var display = t.TrackNumber.ToString() + ". " + t.Title;
+
+                var tab = new TrackTabViewModel(
+                    t.TrackId,
+                    false,
+                    display,
+                    t.Title);
+
+                var review = existingTrackReviews.FirstOrDefault(r => r.TrackId == t.TrackId);
+                if (review != null)
+                {
+                    tab.Notes = review.Notes ?? "";
+                    tab.ScoreText = review.Score.HasValue
+                        ? review.Score.Value.ToString(CultureInfo.InvariantCulture)
+                        : "";
+                }
+
+                Tabs.Add(tab);
             }
 
-            Tabs.Add(new TrackTabViewModel("Conclusion"));
+            var conclusionTab = new TrackTabViewModel(null, true, "Conclusion", "");
+
+            if (existingConclusion != null)
+            {
+                conclusionTab.Notes = existingConclusion.Notes ?? "";
+                conclusionTab.ScoreText = existingConclusion.Score.HasValue
+                    ? existingConclusion.Score.Value.ToString(CultureInfo.InvariantCulture)
+                    : "";
+            }
+
+            Tabs.Add(conclusionTab);
 
             if (Tabs.Count > 0)
+            {
                 SelectedTab = Tabs[0];
+            }
+        }
+
+        private void Save()
+        {
+            using var db = new MusicOrganizerDbContext();
+
+            foreach (var tab in Tabs)
+            {
+                var parsedScore = ParseNullableScore(tab.ScoreText);
+
+                if (tab.IsConclusion)
+                {
+                    var existing = db.AlbumConclusions.FirstOrDefault(c => c.AlbumId == AlbumId);
+                    if (existing == null)
+                    {
+                        db.AlbumConclusions.Add(new AlbumConclusionEntity
+                        {
+                            AlbumId = AlbumId,
+                            Notes = tab.Notes ?? "",
+                            Score = parsedScore
+                        });
+                    }
+                    else
+                    {
+                        existing.Notes = tab.Notes ?? "";
+                        existing.Score = parsedScore;
+                    }
+
+                    continue;
+                }
+
+                if (!tab.TrackId.HasValue)
+                {
+                    continue;
+                }
+
+                var trackId = tab.TrackId.Value;
+
+                var existingTrackReview = db.TrackReviews
+                    .FirstOrDefault(r => r.AlbumId == AlbumId && r.TrackId == trackId);
+
+                if (existingTrackReview == null)
+                {
+                    db.TrackReviews.Add(new TrackReviewEntity
+                    {
+                        TrackReviewId = Guid.NewGuid(),
+                        AlbumId = AlbumId,
+                        TrackId = trackId,
+                        Notes = tab.Notes ?? "",
+                        Score = parsedScore
+                    });
+                }
+                else
+                {
+                    existingTrackReview.Notes = tab.Notes ?? "";
+                    existingTrackReview.Score = parsedScore;
+                }
+            }
+
+            db.SaveChanges();
+        }
+
+        private static double? ParseNullableScore(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return null;
+            }
+
+            if (double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            {
+                return value;
+            }
+
+            return null;
         }
 
         private static BitmapImage LoadImage(string path)
@@ -141,11 +282,51 @@ namespace Music_Organizer.Classes
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler == null)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private async void LoadLyricsForSelectedTab()
+        {
+            _lyricsCts?.Cancel();
+            _lyricsCts = new System.Threading.CancellationTokenSource();
+
+            var token = _lyricsCts.Token;
+
+            var tab = _selectedTab;
+            if (tab == null)
                 return;
 
-            handler(this, new PropertyChangedEventArgs(propertyName));
+            if (tab.IsConclusion)
+            {
+                tab.Lyrics = "";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(tab.TrackTitle) || string.IsNullOrWhiteSpace(ArtistName))
+            {
+                tab.Lyrics = "";
+                return;
+            }
+
+            tab.Lyrics = "Loading lyrics...";
+
+            try
+            {
+                var lyrics = await _lyricsProvider.GetLyricsAsync(tab.TrackTitle, ArtistName, token);
+
+                if (token.IsCancellationRequested)
+                    return;
+
+                tab.Lyrics = lyrics;
+            }
+            catch (System.OperationCanceledException)
+            {
+                // ignore
+            }
+            catch
+            {
+                tab.Lyrics = "Lyrics unavailable.";
+            }
         }
+
     }
 }

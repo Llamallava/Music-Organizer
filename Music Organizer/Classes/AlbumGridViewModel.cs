@@ -69,3 +69,10 @@ public sealed class AlbumGridViewModel
         return image;
     }
 }
+
+public sealed class AlternativeDisplay
+{
+    public string ReleaseId { get; init; }
+    public string Line1 { get; init; }
+    public string Line2 { get; init; }
+}

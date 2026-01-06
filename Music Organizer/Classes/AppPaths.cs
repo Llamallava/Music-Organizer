@@ -9,16 +9,16 @@ namespace Music_Organizer
     {
         public const string AppName = "Music Organizer";
 
-        public static string AppRoot =>
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                AppName
-            );
+        public static string AppRoot => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
+
 
         public static string Covers =>
             Path.Combine(AppRoot, "Covers");
 
         public static string Database =>
             Path.Combine(AppRoot, "library.db");
+
+        public static string Lyrics =>
+            Path.Combine(AppRoot, "Lyrics");
     }
 }

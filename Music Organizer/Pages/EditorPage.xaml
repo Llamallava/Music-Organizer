@@ -118,9 +118,26 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding SelectedTab.DisplayName}"
-                       FontSize="16"
-                       FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding SelectedTab.DisplayName}"
+               FontSize="16"
+               FontWeight="SemiBold"
+               VerticalAlignment="Center" />
+
+                <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="16,0,0,0">
+                    <Button Content="Save"
+                Width="90"
+                Margin="0,0,8,0"
+                Command="{Binding SaveCommand}" />
+
+                    <Button Content="Save &amp; Exit"
+                Width="110"
+                Click="SaveExit_Click" />
+                </StackPanel>
+            </StackPanel>
+
 
             <TextBox Grid.Row="2"
                      Text="{Binding SelectedTab.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

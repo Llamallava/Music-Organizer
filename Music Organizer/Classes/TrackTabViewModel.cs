@@ -13,13 +13,26 @@ namespace Music_Organizer.Classes
         private string _lyrics;
         private string _scoreText;
 
-        public TrackTabViewModel(string displayName)
+        public TrackTabViewModel(
+        System.Guid? trackId,
+        bool isConclusion,
+        string displayName,
+        string trackTitle)
         {
+            TrackId = trackId;
+            IsConclusion = isConclusion;
             _displayName = displayName;
+            TrackTitle = trackTitle;
             _notes = "";
             _lyrics = "";
             _scoreText = "";
         }
+
+        public System.Guid? TrackId { get; }
+
+        public bool IsConclusion { get; }
+
+        public string TrackTitle { get; }
 
         public string DisplayName
         {
@@ -27,7 +40,9 @@ namespace Music_Organizer.Classes
             set
             {
                 if (value == _displayName)
+                {
                     return;
+                }
 
                 _displayName = value;
                 OnPropertyChanged();
@@ -40,7 +55,9 @@ namespace Music_Organizer.Classes
             set
             {
                 if (value == _notes)
+                {
                     return;
+                }
 
                 _notes = value;
                 OnPropertyChanged();
@@ -53,7 +70,9 @@ namespace Music_Organizer.Classes
             set
             {
                 if (value == _lyrics)
+                {
                     return;
+                }
 
                 _lyrics = value;
                 OnPropertyChanged();
@@ -66,7 +85,9 @@ namespace Music_Organizer.Classes
             set
             {
                 if (value == _scoreText)
+                {
                     return;
+                }
 
                 _scoreText = value;
                 OnPropertyChanged();
@@ -77,11 +98,7 @@ namespace Music_Organizer.Classes
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler == null)
-                return;
-
-            handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

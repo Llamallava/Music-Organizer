@@ -30,5 +30,18 @@ namespace Music_Organizer
             if (NavigationService?.CanGoBack == true)
                 NavigationService.GoBack();
         }
+        private void SaveExit_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (DataContext is Music_Organizer.Classes.EditorPageViewModel vm)
+            {
+                vm.SaveCommand.Execute(null);
+            }
+
+            if (NavigationService?.CanGoBack == true)
+            {
+                NavigationService.GoBack();
+            }
+        }
+
     }
 }

@@ -16,5 +16,10 @@ namespace Music_Organizer.Data
         public string CoverFileName { get; set; }
 
         public List<TrackEntity> Tracks { get; set; } = new List<TrackEntity>();
+
+        public List<TrackReviewEntity> TrackReviews { get; set; } = new List<TrackReviewEntity>();
+
+        public AlbumConclusionEntity Conclusion { get; set; }
+
     }
 }

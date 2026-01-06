@@ -15,5 +15,7 @@ namespace Music_Organizer.Data
         public string Title { get; set; }
 
         public AlbumEntity Album { get; set; }
+
+        public TrackReviewEntity Review { get; set; }
     }
 }
