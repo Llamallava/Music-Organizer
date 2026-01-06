@@ -68,6 +68,11 @@ namespace Music_Organizer.Data
             modelBuilder.Entity<TrackEntity>()
                 .Property(t => t.Title)
                 .IsRequired();
+
+            modelBuilder.Entity<TrackReviewEntity>()
+                .Property(r => r.IsInterlude)
+                .HasDefaultValue(false);
+
         }
 
     }

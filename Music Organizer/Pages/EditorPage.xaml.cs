@@ -32,6 +32,17 @@ namespace Music_Organizer
         }
         private void SaveExit_Click(object sender, System.Windows.RoutedEventArgs e)
         {
+            if (!TryValidateScore(ScoreBox.Text, out var songScore))
+            {
+                MessageBox.Show(
+                    "Score must be a number between 0 and 10.",
+                    "Invalid Score",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+                return;
+            }
+
             if (DataContext is Music_Organizer.Classes.EditorPageViewModel vm)
             {
                 vm.SaveCommand.Execute(null);
@@ -41,6 +52,27 @@ namespace Music_Organizer
             {
                 NavigationService.GoBack();
             }
+        }
+        private bool TryValidateScore(string? input, out double score)
+        {
+            score = 0.0;
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            if (!double.TryParse(input, out score))
+            {
+                return false;
+            }
+
+            if (score < 0.0 || score > 10.0)
+            {
+                return false;
+            }
+
+            return true;
         }
 
     }

@@ -19,5 +19,7 @@ namespace Music_Organizer.Data
         public AlbumEntity Album { get; set; }
 
         public TrackEntity Track { get; set; }
+
+        public bool IsInterlude { get; set; }
     }
 }

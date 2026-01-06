@@ -2,6 +2,7 @@
 using System.Data;
 using System.IO;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using Music_Organizer.Classes;
 using Music_Organizer.Data;
 
@@ -21,7 +22,7 @@ namespace Music_Organizer
             Directory.CreateDirectory(AppPaths.Lyrics);
 
             using var db = new MusicOrganizerDbContext();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Music_Organizer.Pages;
 
 namespace Music_Organizer
 {
@@ -30,7 +31,7 @@ namespace Music_Organizer
 
         private void Stats_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new AddAlbumPage());
+            NavigationService?.Navigate(new StatsPage());
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)

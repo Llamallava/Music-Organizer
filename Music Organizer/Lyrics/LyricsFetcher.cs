@@ -18,11 +18,13 @@ namespace Music_Organizer.Lyrics
             var lyricsFilePath =
                 Path.Combine(lyricsDirectory, songName + ".txt");
 
-            // 1) Read from disk if already cached
+            // 1) Read from disk if already cached (even if it's empty)
             if (File.Exists(lyricsFilePath))
             {
                 return await File.ReadAllTextAsync(lyricsFilePath, Encoding.UTF8);
             }
+
+            var lyrics = "";
 
             using var http = new HttpClient();
 
@@ -37,7 +39,11 @@ namespace Music_Organizer.Lyrics
             var searchResponse =
                 await http.GetAsync($"https://api.genius.com/search?q={query}");
 
-            searchResponse.EnsureSuccessStatusCode();
+            if (!searchResponse.IsSuccessStatusCode)
+            {
+                await SaveLyricsFileAsync(lyricsDirectory, lyricsFilePath, lyrics);
+                return lyrics;
+            }
 
             var searchJson =
                 await searchResponse.Content.ReadAsStringAsync();
@@ -51,7 +57,8 @@ namespace Music_Organizer.Lyrics
 
             if (hits.GetArrayLength() == 0)
             {
-                return "";
+                await SaveLyricsFileAsync(lyricsDirectory, lyricsFilePath, lyrics);
+                return lyrics;
             }
 
             var url =
@@ -62,7 +69,8 @@ namespace Music_Organizer.Lyrics
 
             if (string.IsNullOrWhiteSpace(url))
             {
-                return "";
+                await SaveLyricsFileAsync(lyricsDirectory, lyricsFilePath, lyrics);
+                return lyrics;
             }
 
             // 3) Fetch lyrics page HTML
@@ -74,7 +82,12 @@ namespace Music_Organizer.Lyrics
             );
 
             var pageResponse = await http.GetAsync(url);
-            pageResponse.EnsureSuccessStatusCode();
+
+            if (!pageResponse.IsSuccessStatusCode)
+            {
+                await SaveLyricsFileAsync(lyricsDirectory, lyricsFilePath, lyrics);
+                return lyrics;
+            }
 
             var html =
                 await pageResponse.Content.ReadAsStringAsync();
@@ -87,35 +100,39 @@ namespace Music_Organizer.Lyrics
                 htmlDoc.DocumentNode
                     .SelectNodes("//div[@data-lyrics-container='true']");
 
-            if (nodes is null || nodes.Count == 0)
+            if (nodes is not null && nodes.Count > 0)
             {
-                return "";
+                lyrics =
+                    string.Join(
+                        "\n",
+                        nodes
+                            .Select(n =>
+                                HtmlAgilityPack.HtmlEntity
+                                    .DeEntitize(n.InnerText)
+                                    .Trim()
+                            )
+                            .Where(t => !string.IsNullOrWhiteSpace(t))
+                    );
             }
 
-            var lyrics =
-                string.Join(
-                    "\n",
-                    nodes
-                        .Select(n =>
-                            HtmlAgilityPack.HtmlEntity
-                                .DeEntitize(n.InnerText)
-                                .Trim()
-                        )
-                        .Where(t => !string.IsNullOrWhiteSpace(t))
-                );
-
-
             string cleanLyrics = LyricsCleaner.CleanGeniusLyrics(lyrics);
-            // 5) Persist newly fetched lyrics
+            // 5) Persist newly fetched lyrics, even if empty
+            await SaveLyricsFileAsync(lyricsDirectory, lyricsFilePath, cleanLyrics);
+
+            return cleanLyrics;
+        }
+
+        private static async Task SaveLyricsFileAsync(
+            string lyricsDirectory,
+            string lyricsFilePath,
+            string lyrics)
+        {
             Directory.CreateDirectory(lyricsDirectory);
 
             await File.WriteAllTextAsync(
                 lyricsFilePath,
-                cleanLyrics,
-                Encoding.UTF8
-            );
-
-            return cleanLyrics;
+                lyrics ?? "",
+                Encoding.UTF8);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Music_Organizer.Lyrics
         {
             if (string.IsNullOrWhiteSpace(raw))
             {
-                return string.Empty;
+                return "";
             }
 
             string text = raw;

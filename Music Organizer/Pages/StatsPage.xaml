@@ -1,0 +1,88 @@
+﻿<Page x:Class="Music_Organizer.Pages.StatsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Music_Organizer.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="StatsPage">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="16">
+
+        <StackPanel>
+
+            <TextBlock Text="View Stats"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,16" />
+
+            <!-- Top 10 Albums by conclusion score -->
+            <TextBlock Text="Top 10 Albums by score"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+
+            <ListView ItemsSource="{Binding TopAlbumsByConclusionScore}"
+                      Margin="0,0,0,20">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="#" Width="40"
+                                        DisplayMemberBinding="{Binding Rank}" />
+                        <GridViewColumn Header="Album" Width="320"
+                                        DisplayMemberBinding="{Binding AlbumDisplay}" />
+                        <GridViewColumn Header="Score" Width="80"
+                                        DisplayMemberBinding="{Binding ScoreText}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Top 10 Albums by computed score -->
+            <TextBlock Text="Top 10 Albums by score (computed)"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+
+            <ListView ItemsSource="{Binding TopAlbumsByComputedScore}"
+                      Margin="0,0,0,20">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="#" Width="40"
+                                        DisplayMemberBinding="{Binding Rank}" />
+                        <GridViewColumn Header="Album" Width="320"
+                                        DisplayMemberBinding="{Binding AlbumDisplay}" />
+                        <GridViewColumn Header="Score" Width="80"
+                                        DisplayMemberBinding="{Binding ScoreText}" />
+                        <GridViewColumn Header="Tracks used" Width="90"
+                                        DisplayMemberBinding="{Binding TracksUsedText}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <!-- Top 10 songs by score -->
+            <TextBlock Text="Top 10 songs by score"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+
+            <ListView ItemsSource="{Binding TopSongsByScore}"
+                      Margin="0,0,0,20">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="#" Width="40"
+                                        DisplayMemberBinding="{Binding Rank}" />
+                        <GridViewColumn Header="Song" Width="260"
+                                        DisplayMemberBinding="{Binding SongTitle}" />
+                        <GridViewColumn Header="Album" Width="260"
+                                        DisplayMemberBinding="{Binding AlbumDisplay}" />
+                        <GridViewColumn Header="Score" Width="80"
+                                        DisplayMemberBinding="{Binding ScoreText}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
