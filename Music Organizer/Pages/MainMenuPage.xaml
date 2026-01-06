@@ -8,61 +8,234 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainMenuPage">
 
-    <Grid Background="DimGray">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="20" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="20" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Page.Resources>
+
+        <!-- Button sizes scale with the window, but stay within sane bounds -->
+        <local:ClampConverter x:Key="ClampConverter"/>
+
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Agency FB"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#343A40"/>
+            <Setter Property="BorderBrush" Value="#60666C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- left accent bar -->
+                                <Border Grid.Column="0" Width="6" Background="#8AB4F8" CornerRadius="10,0,0,10"/>
+
+                                <ContentPresenter Grid.Column="1"
+                                                  Margin="14,0,0,0"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  RecognizesAccessKey="True"/>
+
+                                <!-- subtle arrow -->
+                                <TextBlock Grid.Column="2"
+                                           Text="›"
+                                           Opacity="0.7"
+                                           FontSize="26"
+                                           Margin="12,0,14,0"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#3E454C"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#8A8F95"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2C3237"/>
+                                <Setter TargetName="Bd" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="LineHeight" Value="1"/>
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Background="DimGray"
+          Margin="26"
+          SnapsToDevicePixels="True">
+
         <Grid.ColumnDefinitions>
+            <!-- Left menu column -->
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <!-- Space between menu and title -->
+            <ColumnDefinition Width="32"/>
+            <!-- Right title/content -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock
-        Grid.Row="1"
-        Grid.Column="1"
-        FontSize="72"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Bottom"
-        Text="Surrender"/>
 
-        <Button
-        Grid.Row="3"
-        Click="Reviews_Click"
-        FontFamily="Agency FB"
-        Width="200"
-        Height="60"
-        
-        HorizontalAlignment="Left">
-            Reviews
-        </Button>
+        <!-- LEFT: Menu card -->
+        <Border Grid.Column="0"
+                Background="#24292E"
+                CornerRadius="14"
+                BorderBrush="#4C545C"
+                BorderThickness="1"
+                Padding="18"
+                VerticalAlignment="Center">
 
-        <Button
-        Grid.Row="5"
-        Click="Stats_Click"
-        FontFamily="Agency FB"
-        Width="200"
-        Height="60"
-        HorizontalAlignment="Left">
-            View Stats
-        </Button>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <Button
-        Grid.Row="6"
-        
-        Click="Search_Click"
-        FontFamily="Agency FB"
-        Width="200"
-        Height="60"
-        VerticalAlignment="Top"
-        HorizontalAlignment="Left"
-        Margin="0,20,0,0">
-            Search
-        </Button>
+                <TextBlock Grid.Row="0"
+                           Text="Menu"
+                           Foreground="#C9D1D9"
+                           FontSize="18"
+                           FontWeight="SemiBold"/>
+
+                <!-- Use window size to scale button width/height, clamped -->
+                <Button Grid.Row="2"
+                        Click="Reviews_Click"
+                        Style="{StaticResource MenuButtonStyle}">
+                    <Button.Width>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <!-- value = window width -->
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualWidth"/>
+                            <!-- min -->
+                            <Binding Source="220"/>
+                            <!-- max -->
+                            <Binding Source="360"/>
+                            <!-- divisor (ActualWidth / divisor) -->
+                            <Binding Source="5.0"/>
+                        </MultiBinding>
+                    </Button.Width>
+                    <Button.Height>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualHeight"/>
+                            <Binding Source="56"/>
+                            <Binding Source="84"/>
+                            <Binding Source="10.0"/>
+                        </MultiBinding>
+                    </Button.Height>
+                    Reviews
+                </Button>
+
+                <Button Grid.Row="4"
+                        Click="Stats_Click"
+                        Style="{StaticResource MenuButtonStyle}">
+                    <Button.Width>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualWidth"/>
+                            <Binding Source="220"/>
+                            <Binding Source="360"/>
+                            <Binding Source="5.0"/>
+                        </MultiBinding>
+                    </Button.Width>
+                    <Button.Height>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualHeight"/>
+                            <Binding Source="56"/>
+                            <Binding Source="84"/>
+                            <Binding Source="10.0"/>
+                        </MultiBinding>
+                    </Button.Height>
+                    View Stats
+                </Button>
+
+                <Button Grid.Row="6"
+                        Click="Search_Click"
+                        Style="{StaticResource MenuButtonStyle}">
+                    <Button.Width>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualWidth"/>
+                            <Binding Source="220"/>
+                            <Binding Source="360"/>
+                            <Binding Source="5.0"/>
+                        </MultiBinding>
+                    </Button.Width>
+                    <Button.Height>
+                        <MultiBinding Converter="{StaticResource ClampConverter}">
+                            <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualHeight"/>
+                            <Binding Source="56"/>
+                            <Binding Source="84"/>
+                            <Binding Source="10.0"/>
+                        </MultiBinding>
+                    </Button.Height>
+                    Search
+                </Button>
+
+            </Grid>
+        </Border>
+
+        <!-- RIGHT: Title area -->
+        <Grid Grid.Column="2"
+              VerticalAlignment="Center"
+              Margin="8,0,0,0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="14"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Style="{StaticResource TitleStyle}"
+                       Text="Everything Musical Organizer" TextWrapping="Wrap">
+                <TextBlock.FontSize>
+                    <MultiBinding Converter="{StaticResource ClampConverter}">
+                        <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="ActualWidth"/>
+                        <Binding Source="34"/>
+                        <Binding Source="76"/>
+                        <Binding Source="12.0"/>
+                    </MultiBinding>
+                </TextBlock.FontSize>
+            </TextBlock>
+
+            <TextBlock Grid.Row="2"
+                       Foreground="#C9D1D9"
+                       FontSize="16"
+                       TextWrapping="Wrap"
+                       Text="Put something here later"
+                       Opacity="0.9"/>
+        </Grid>
+
     </Grid>
 </Page>
