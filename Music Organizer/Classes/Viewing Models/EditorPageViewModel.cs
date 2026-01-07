@@ -20,28 +20,11 @@ namespace Music_Organizer.Classes
         private readonly Music_Organizer.Lyrics.ILyricsProvider _lyricsProvider;
         private System.Threading.CancellationTokenSource _lyricsCts;
         public RelayCommand ToggleInterludeCommand { get; }
-
-        private enum AudioPanelState
-        {
-            Hidden,
-            Prompt,
-            Loading,
-            Ready,
-            Error
-        }
-
-        private AudioPanelState _audioState;
-        private string _audioStatusText;
-        private Uri _audioSource;
-        private string _audioTempFilePath;
-        private System.Threading.CancellationTokenSource _audioCts;
+        private readonly Guid? _initialTrackId;
 
         public RelayCommand LoadAudioCommand { get; }
 
-        public EditorPageViewModel(System.Guid albumId) : this(albumId, new Music_Organizer.Lyrics.DefaultLyricsProvider())
-        {
-        }
-        public EditorPageViewModel(System.Guid albumId, Music_Organizer.Lyrics.ILyricsProvider lyricsProvider)
+        public EditorPageViewModel(System.Guid albumId, Music_Organizer.Lyrics.ILyricsProvider lyricsProvider, Guid? initialTrackId)
         {
             AlbumId = albumId;
             Tabs = new System.Collections.ObjectModel.ObservableCollection<TrackTabViewModel>();
@@ -50,8 +33,7 @@ namespace Music_Organizer.Classes
 
             _lyricsProvider = lyricsProvider;
 
-            _audioState = AudioPanelState.Hidden;
-            _audioStatusText = "";
+            _initialTrackId = initialTrackId;
 
             LoadAlbumAndTabs(albumId);
         }
@@ -211,10 +193,18 @@ namespace Music_Organizer.Classes
 
             Tabs.Add(conclusionTab);
 
-            if (Tabs.Count > 0)
+            if (_initialTrackId.HasValue)
             {
-                SelectedTab = Tabs[0];
+                var match = Tabs.FirstOrDefault(t => t.TrackId == _initialTrackId.Value);
+                if (match != null)
+                {
+                    SelectedTab = match;
+                    return;
+                }
             }
+
+            if (Tabs.Count > 0)
+                SelectedTab = Tabs[0];
         }
 
         private void Save()

@@ -37,7 +37,7 @@ namespace Music_Organizer
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService?.Navigate(new SearchPage());
         }
     }
     public sealed class ClampConverter : IMultiValueConverter

@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Music_Organizer.Classes;
+using Music_Organizer.Lyrics;
 
 namespace Music_Organizer
 {
@@ -19,10 +20,17 @@ namespace Music_Organizer
     /// </summary>
     public partial class EditorPage : Page
     {
-        public EditorPage(Guid albumId)
+        public EditorPage(Guid albumid) : this(albumid, null)
+        {
+
+        }
+        public EditorPage(Guid albumId, Guid? initialTrackId)
         {
             InitializeComponent();
-            DataContext = new EditorPageViewModel(albumId);
+
+            ILyricsProvider lyricsProvider = new DefaultLyricsProvider();
+
+            DataContext = new EditorPageViewModel(albumId, lyricsProvider,  initialTrackId);
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
