@@ -14,9 +14,9 @@
     <SolidColorBrush x:Key="TextSecondary" Color="#B7C3DA"/>
     <SolidColorBrush x:Key="TextMuted" Color="#8FA0BF"/>
 
-    <SolidColorBrush x:Key="AccentA" Color="#7C4DFF"/>
-    <SolidColorBrush x:Key="AccentB" Color="#00D4FF"/>
-    <SolidColorBrush x:Key="AccentC" Color="#FF3D9A"/>
+    <SolidColorBrush x:Key="AccentA" Color="#AB49BB"/>
+    <SolidColorBrush x:Key="AccentB" Color="#3DE2FF"/>
+    <SolidColorBrush x:Key="AccentC" Color="#FF5CAB"/>
 
     <LinearGradientBrush x:Key="HeaderGlow" StartPoint="0,0" EndPoint="1,0">
         <GradientStop Color="#3A1DFF" Offset="0"/>

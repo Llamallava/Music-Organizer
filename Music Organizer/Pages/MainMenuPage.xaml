@@ -14,24 +14,53 @@
 
     <Grid Background="{StaticResource Backdrop}">
 
-        <!-- Big, soft color fill (visual only) -->
-        <Canvas IsHitTestVisible="False" Opacity="0.42">
-            <!-- Left glow column -->
-            <Ellipse Width="780" Height="780" Canvas.Left="-520" Canvas.Top="-260"
-                     Fill="{StaticResource AccentA}" Opacity="0.22"/>
-            <Ellipse Width="520" Height="520" Canvas.Left="-360" Canvas.Top="220"
-                     Fill="{StaticResource AccentC}" Opacity="0.18"/>
+        <!-- Background art that scales consistently in fullscreen/windowed -->
+        <Viewbox Stretch="UniformToFill"
+         IsHitTestVisible="False"
+         Opacity="0.42">
+            <!-- Pick a "design size" you like; this keeps composition consistent -->
+            <Canvas Width="1600" Height="900">
 
-            <!-- Right-side color pool -->
-            <Ellipse Width="740" Height="740" Canvas.Left="520" Canvas.Top="-220"
-                     Fill="{StaticResource AccentB}" Opacity="0.18"/>
-            <Ellipse Width="620" Height="620" Canvas.Left="320" Canvas.Top="260"
-                     Fill="{StaticResource AccentA}" Opacity="0.12"/>
+                <!-- Optional subtle diagonal sweep -->
+                <Rectangle Width="1600" Height="900">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#00101117" Offset="0"/>
+                            <GradientStop Color="#222C1DFF" Offset="0.40"/>
+                            <GradientStop Color="#2200D4FF" Offset="0.70"/>
+                            <GradientStop Color="#00FF2C86" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
 
-            <!-- Center hint -->
-            <Ellipse Width="520" Height="520" Canvas.Left="220" Canvas.Top="40"
-                     Fill="{StaticResource AccentC}" Opacity="0.10"/>
-        </Canvas>
+                <!-- Ellipses: positions are now stable because the Canvas size is stable -->
+                <Ellipse Width="920" Height="920"
+                 Canvas.Left="-560" Canvas.Top="-320"
+                 Fill="{StaticResource AccentA}"
+                 Opacity="0.22"/>
+
+                <Ellipse Width="640" Height="640"
+                 Canvas.Left="-420" Canvas.Top="360"
+                 Fill="{StaticResource AccentC}"
+                 Opacity="0.18"/>
+
+                <Ellipse Width="860" Height="860"
+                 Canvas.Left="1040" Canvas.Top="-260"
+                 Fill="{StaticResource AccentB}"
+                 Opacity="0.18"/>
+
+                <Ellipse Width="720" Height="720"
+                 Canvas.Left="740" Canvas.Top="420"
+                 Fill="{StaticResource AccentA}"
+                 Opacity="0.12"/>
+
+                <Ellipse Width="620" Height="620"
+                 Canvas.Left="460" Canvas.Top="60"
+                 Fill="{StaticResource AccentC}"
+                 Opacity="0.10"/>
+            </Canvas>
+        </Viewbox>
+
 
         <!-- Subtle diagonal sweep for more gradient richness -->
         <Rectangle IsHitTestVisible="False" Opacity="0.35">
@@ -122,10 +151,6 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0"
-                                   Text="Menu"
-                                   FontSize="18"
-                                   FontWeight="ExtraBold"/>
 
                         <Border Grid.Row="1"
                                 Height="1"
