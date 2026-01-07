@@ -201,9 +201,11 @@
                                     CornerRadius="14"
                                     Padding="14,8"
                                     SnapsToDevicePixels="True">
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  RecognizesAccessKey="True"/>
+                                <ContentPresenter ContentSource="Header"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    RecognizesAccessKey="True"/>
+
                             </Border>
 
                             <!-- Accent strip when selected -->
@@ -341,14 +343,20 @@
 
                             <!-- Tabs -->
                             <TabPanel Grid.Row="0"
-                              IsItemsHost="True"
-                              KeyboardNavigation.TabIndex="1"/>
+                                IsItemsHost="True"
+                                KeyboardNavigation.TabIndex="1"
+                                Margin="0,6,0,6"/>
 
                             <!-- Selected tab content ONLY -->
-                            <ContentPresenter Grid.Row="2"
-                                      ContentSource="SelectedContent"
-                                      Margin="0"
-                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <Border Grid.Row="2"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter x:Name="PART_SelectedContentHost"
+                                          ContentSource="SelectedContent"
+                                          Margin="0"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -440,7 +448,7 @@
                 </TabControl.Resources>
 
                 <!-- SONG SEARCH -->
-                <TabItem Header="Songs">
+                <TabItem Header="Songs" Margin="0">
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="320"/>
@@ -586,7 +594,7 @@
                 </TabItem>
 
                 <!-- ALBUM SEARCH -->
-                <TabItem Header="Albums">
+                <TabItem Header="Albums" Margin="0">
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="320"/>
