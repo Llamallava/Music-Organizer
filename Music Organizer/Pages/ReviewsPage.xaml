@@ -1,111 +1,255 @@
 ﻿<Page x:Class="Music_Organizer.ReviewsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Music_Organizer"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ReviewsPage">
 
-    <Grid Background="DimGray">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid Background="{StaticResource Backdrop}">
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Consistent background art scaling (visual only) -->
+        <Viewbox Stretch="UniformToFill"
+                 IsHitTestVisible="False"
+                 Opacity="0.35">
+            <Canvas Width="1600" Height="900">
+                <Ellipse Width="520" Height="520" Canvas.Left="-220" Canvas.Top="-220" Fill="#222B3F"/>
+                <Ellipse Width="620" Height="620" Canvas.Left="980" Canvas.Top="40" Fill="#1B2233"/>
+                <Ellipse Width="860" Height="860" Canvas.Left="260" Canvas.Top="460" Fill="#141A28"/>
+            </Canvas>
+        </Viewbox>
 
-            <!-- Back Button -->
-            <Button
-                Grid.Column="0"
-                Name="Back_Button"
-                Content="←"
-                Width="44"
-                Height="34"
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="14"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0"
+                    CornerRadius="18"
+                    BorderBrush="{StaticResource BorderSoft}"
+                    BorderThickness="1"
+                    Background="{StaticResource Bg1}"
+                    Padding="14"
+                    Effect="{StaticResource CardShadow}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Back -->
+                        <Button Grid.Column="0"
+                                Name="Back_Button"
+                                Style="{StaticResource BackButtonStyle}"
+                                Content="←"
+                                Click="Back_Click"
+                                ToolTip="Back"/>
+
+                        <!-- Add Album -->
+                        <Button Grid.Column="2"
+                                Name="AddAlbum_Button"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Padding="14,9"
+                                Click="AddAlbum_Button_Click"
+                                HorizontalAlignment="Left"
+                                Content="Add Album"/>
+
+                        <!-- Search -->
+                        <TextBox Grid.Column="4"
+                                 Style="{StaticResource CrispTextBoxStyle}"
+                                 Margin="0"
+                                 Height="34"
+                                 VerticalContentAlignment="Center"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- Colored chip (visual only) -->
+                        <Border Grid.Column="6"
+                                Height="28"
+                                CornerRadius="14"
+                                BorderBrush="{StaticResource BorderSoft}"
+                                BorderThickness="1"
+                                Background="#0E1420"
+                                VerticalAlignment="Center"
+                                Padding="10,0"
+                                Opacity="0.95">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="8" Height="8" Fill="{StaticResource AccentB}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Reviews"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Integrated gradient bar -->
+                    <Border Grid.Row="1"
+                            Height="3"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="0,0,18,18"
+                            Background="{StaticResource HeaderGlow}"
+                            Effect="{StaticResource GlowShadow}"
+                            Opacity="0.85"
+                            IsHitTestVisible="False"/>
+                </Grid>
+            </Border>
+
+            <!-- Album Grid Card -->
+            <Border Grid.Row="2"
+                    Style="{StaticResource CardBorderStyle}"
+                    Background="{StaticResource CardBg}"
+                    Margin="0,0,0,0">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Card title row (visual only) -->
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Text="Your Albums"
+                                   FontSize="15"
+                                   FontWeight="ExtraBold"/>
+
+                        <Border Grid.Row="1"
+                                Height="3"
+                                CornerRadius="2"
+                                Background="{StaticResource HeaderGlow}"
+                                Opacity="0.55"
+                                IsHitTestVisible="False"/>
+                    </Grid>
+
+                    <!-- Grid -->
+                    <ScrollViewer Grid.Row="2"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="6">
+
+                        <ItemsControl ItemsSource="{Binding AlbumItems}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Margin="8"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                FocusVisualStyle="{x:Null}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Click="Back_Click"
-                ToolTip="Back"/>
+                Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                CommandParameter="{Binding}">
 
-            <!-- Add Album Button -->
-            <Button
-                Grid.Column="2"
-                Name="AddAlbum_Button"
-                Click="AddAlbum_Button_Click"
-                HorizontalAlignment="Left">
-                Add Album
-            </Button>
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid Width="154">
+                                                    <Border x:Name="Tile"
+                                CornerRadius="16"
+                                Background="{StaticResource CardBg2}"
+                                BorderBrush="{StaticResource BorderSoft}"
+                                BorderThickness="1"
+                                Padding="10"
+                                SnapsToDevicePixels="True">
 
-            <!-- Search Box -->
-            <TextBox
-                Grid.Column="4"
-                Height="30"
-                VerticalContentAlignment="Center"
-                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        <StackPanel>
+                                                            <Border Width="134"
+                                        Height="134"
+                                        CornerRadius="14"
+                                        ClipToBounds="True"
+                                        BorderBrush="#2E3F5A"
+                                        BorderThickness="1">
+                                                                <Image Source="{Binding CoverImage}"
+                                           Stretch="UniformToFill"
+                                           SnapsToDevicePixels="True"
+                                           UseLayoutRounding="True"/>
+                                                            </Border>
+
+                                                            <TextBlock Margin="0,8,0,0"
+                                           Text="{Binding DisplayText}"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontSize="11.5"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           MaxHeight="36"/>
+                                                        </StackPanel>
+                                                    </Border>
+
+                                                    <!-- Small integrated color accent (visual only) -->
+                                                    <Border x:Name="AccentBar"
+                                Height="4"
+                                CornerRadius="0,0,16,16"
+                                VerticalAlignment="Bottom"
+                                Margin="10,0,10,10"
+                                Background="{StaticResource HeaderGlow}"
+                                Opacity="0.18"
+                                IsHitTestVisible="False"/>
+
+                                                </Grid>
+
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Tile" Property="BorderBrush" Value="{StaticResource AccentB}"/>
+                                                        <Setter TargetName="Tile" Property="Background" Value="#162238"/>
+                                                        <Setter TargetName="AccentBar" Property="Opacity" Value="0.55"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="Tile" Property="BorderBrush" Value="{StaticResource AccentA}"/>
+                                                        <Setter TargetName="Tile" Property="Background" Value="#111B2E"/>
+                                                        <Setter TargetName="Tile" Property="RenderTransform">
+                                                            <Setter.Value>
+                                                                <TranslateTransform Y="1"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="Tile" Property="Opacity" Value="0.55"/>
+                                                        <Setter TargetName="AccentBar" Property="Opacity" Value="0.12"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
         </Grid>
-
-        <!-- Album Grid -->
-        <ScrollViewer
-            Grid.Row="1"
-            VerticalScrollBarVisibility="Auto"
-            HorizontalScrollBarVisibility="Disabled"
-            Padding="8">
-
-            <ItemsControl ItemsSource="{Binding AlbumItems}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel IsItemsHost="True"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button
-                            Margin="6"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            FocusVisualStyle="{x:Null}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Command="{Binding DataContext.OpenAlbumCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                            CommandParameter="{Binding}">
-
-                            <StackPanel Width="140">
-                                <Border Width="140"
-                                        Height="140"
-                                        CornerRadius="6"
-                                        ClipToBounds="True">
-                                    <Image
-                                        Source="{Binding CoverImage}"
-                                        Stretch="UniformToFill"
-                                        SnapsToDevicePixels="True"
-                                        UseLayoutRounding="True"/>
-                                </Border>
-
-                                <TextBlock
-                                    Margin="0,6,0,0"
-                                    Text="{Binding DisplayText}"
-                                    TextWrapping="Wrap"
-                                    TextTrimming="CharacterEllipsis"
-                                    FontSize="11"
-                                    HorizontalAlignment="Center"
-                                    TextAlignment="Center"
-                                    MaxHeight="34"/>
-                            </StackPanel>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
     </Grid>
 </Page>

@@ -8,162 +8,414 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddAlbumPage">
 
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="12"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Page.Resources>
+        <!-- Force white text on this page -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-        <!-- Top bar: Back + inputs + actions -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Force white typed text -->
+        <Style x:Key="AddAlbumTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource CrispTextBoxStyle}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="Background" Value="#0E1420"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
+            <Setter Property="SelectionBrush" Value="#553A1DFF"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-            <!-- Back button (top-left) -->
-            <Button
-                Name="Back_Button"
-                Content="←"
-                Width="44"
-                Height="34"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Click="Back_Click"
-                ToolTip="Back"/>
+        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-            <!-- Responsive form area -->
-            <Grid Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+        <Style TargetType="ListBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#0E1420"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
 
-                <TextBlock Text="Artist:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox
-                    x:Name="ArtistBox"
-                    Grid.Column="1"
-                    MinWidth="180"
-                    Margin="0,0,0,0"
-                    HorizontalAlignment="Stretch"/>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
 
-                <TextBlock
-                    Grid.Column="3"
-                    Text="Album:"
-                    VerticalAlignment="Center"
-                    Margin="0,0,8,0"/>
+        <Style TargetType="Expander">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Page.Resources>
 
-                <TextBox
-                    x:Name="AlbumBox"
-                    Grid.Column="4"
-                    MinWidth="180"
-                    HorizontalAlignment="Stretch"/>
+    <Grid Background="{StaticResource Backdrop}">
 
-                <Button
-                    Grid.Column="6"
-                    Content="Fetch"
-                    MinWidth="110"
-                    Padding="14,6"
-                    Click="Fetch_Click"/>
+        <!-- Consistent background art scaling (visual only) -->
+        <Viewbox Stretch="UniformToFill"
+                 IsHitTestVisible="False"
+                 Opacity="0.35">
+            <Canvas Width="1600" Height="900">
+                <Ellipse Width="560" Height="560" Canvas.Left="-240" Canvas.Top="-240" Fill="#222B3F"/>
+                <Ellipse Width="700" Height="700" Canvas.Left="980" Canvas.Top="-160" Fill="#1B2233"/>
+                <Ellipse Width="920" Height="920" Canvas.Left="320" Canvas.Top="430" Fill="#141A28"/>
+            </Canvas>
+        </Viewbox>
 
-                <Button
-                    Grid.Column="8"
-                    Content="Save"
-                    MinWidth="110"
-                    Padding="14,6"
-                    Click="Save_Click"/>
-            </Grid>
-        </Grid>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="12"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <TextBlock
-            x:Name="StatusText"
-            Grid.Row="2"
-            Opacity="0.8"
-            TextWrapping="Wrap"/>
+            <!-- Header card -->
+            <Border Grid.Row="0"
+                    CornerRadius="18"
+                    BorderBrush="{StaticResource BorderSoft}"
+                    BorderThickness="1"
+                    Background="{StaticResource Bg1}"
+                    Padding="14"
+                    Effect="{StaticResource CardShadow}">
 
-        <!-- Main content -->
-        <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220" />
-                <ColumnDefinition Width="16" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                    </Grid.RowDefinitions>
 
-            <!-- Cover -->
-            <Border Width="220"
-            Height="220"
-            CornerRadius="10"
-            ClipToBounds="True">
-                <Image x:Name="CoverImage"
-               Stretch="UniformToFill"/>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Back -->
+                        <Button Grid.Column="0"
+                                Name="Back_Button"
+                                Style="{StaticResource BackButtonStyle}"
+                                Content="←"
+                                Click="Back_Click"
+                                ToolTip="Back"/>
+
+                        <!-- Title + inputs/actions -->
+                        <Grid Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Add Album"
+                                           FontSize="20"
+                                           FontWeight="ExtraBold"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- Small chip -->
+                                <Border Grid.Column="1"
+                                        Height="28"
+                                        CornerRadius="14"
+                                        BorderBrush="{StaticResource BorderSoft}"
+                                        BorderThickness="1"
+                                        Background="#0E1420"
+                                        VerticalAlignment="Center"
+                                        Padding="10,0"
+                                        Opacity="0.95">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Fill="{StaticResource AccentB}" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Fetch → Confirm → Save"
+                                                   FontSize="12"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Accent bar -->
+                            <Border Grid.Row="1"
+                                    Height="3"
+                                    CornerRadius="2"
+                                    Background="{StaticResource HeaderGlow}"
+                                    Effect="{StaticResource GlowShadow}"
+                                    Opacity="0.75"
+                                    IsHitTestVisible="False"/>
+
+                            <!-- Inputs + actions row -->
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="16"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="Artist"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+
+                                <TextBox x:Name="ArtistBox"
+                                         Grid.Column="2"
+                                         MinWidth="180"
+                                         Style="{StaticResource AddAlbumTextBoxStyle}"
+                                         HorizontalAlignment="Stretch"/>
+
+                                <TextBlock Grid.Column="4"
+                                           Text="Album"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+
+                                <TextBox x:Name="AlbumBox"
+                                         Grid.Column="6"
+                                         MinWidth="180"
+                                         Style="{StaticResource AddAlbumTextBoxStyle}"
+                                         HorizontalAlignment="Stretch"/>
+
+                                <Button Grid.Column="8"
+                                        Content="Fetch"
+                                        MinWidth="110"
+                                        Padding="14,7"
+                                        Click="Fetch_Click"/>
+
+                                <Button Grid.Column="10"
+                                        Content="Save"
+                                        MinWidth="110"
+                                        Padding="14,7"
+                                        Click="Save_Click"/>
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+
+                </Grid>
             </Border>
 
-            <!-- Right side: tracks + alternatives -->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="12" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            <!-- Status card (so it never gets lost) -->
+            <Border Grid.Row="2"
+                    CornerRadius="16"
+                    BorderBrush="{StaticResource BorderSoft}"
+                    BorderThickness="1"
+                    Background="#0E1420"
+                    Padding="12"
+                    Opacity="0.95">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <!-- Track list -->
-                <ListBox x:Name="TracksList"
-                 Grid.Row="0"/>
+                    <Ellipse Grid.Column="0"
+                             Width="10" Height="10"
+                             Fill="{StaticResource AccentC}"
+                             VerticalAlignment="Center"/>
 
-                <!-- Alternatives (collapsed by default) -->
-                <Expander x:Name="AlternativesExpander"
-                  Grid.Row="2"
-                  Header="Not what you were looking for?"
-                  IsExpanded="False">
+                    <TextBlock Grid.Column="2"
+                               x:Name="StatusText"
+                               FontSize="12.5"
+                               Opacity="0.95"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
 
-                    <Grid>
+            <!-- Main content card -->
+            <Border Grid.Row="4"
+                    Style="{StaticResource CardBorderStyle}"
+                    Background="{StaticResource CardBg}"
+                    Padding="14">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cover panel -->
+                    <Grid Grid.Column="0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="8" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Show next 3"
-                            Width="120"
-                            Click="ShowNext3_Click"/>
-                            <TextBlock x:Name="AltStatus"
-                               Margin="12,0,0,0"
-                               VerticalAlignment="Center"
-                               Opacity="0.8"/>
-                        </StackPanel>
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                            </Grid.RowDefinitions>
 
-                        <ListBox x:Name="AlternativesList"
-                         Grid.Row="2"
-                         MouseDoubleClick="AlternativesList_DoubleClick">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,0,10">
-                                        <TextBlock Text="{Binding Line1}"
-                                           FontWeight="SemiBold"
-                                           TextWrapping="Wrap"/>
-                                        <TextBlock Text="{Binding Line2}"
-                                           Opacity="0.75"
-                                           TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                            <TextBlock Grid.Row="0"
+                                       Text="Cover"
+                                       FontSize="15"
+                                       FontWeight="ExtraBold"/>
+
+                            <Border Grid.Row="1"
+                                    Height="3"
+                                    CornerRadius="2"
+                                    Background="{StaticResource HeaderGlow}"
+                                    Opacity="0.55"
+                                    IsHitTestVisible="False"/>
+                        </Grid>
+
+                        <Border Grid.Row="2"
+                                Width="260"
+                                Height="260"
+                                CornerRadius="18"
+                                ClipToBounds="True"
+                                BorderBrush="{StaticResource BorderSoft}"
+                                BorderThickness="1"
+                                Background="#0E1420">
+                            <Image x:Name="CoverImage"
+                                   Stretch="UniformToFill"/>
+                        </Border>
+
+                        <!-- Small glow strip under cover (integrated color) -->
+                        <Border Height="5"
+                                CornerRadius="3"
+                                Background="{StaticResource HeaderGlow}"
+                                Opacity="0.25"
+                                Margin="10,0,10,10"
+                                VerticalAlignment="Bottom"
+                                IsHitTestVisible="False"/>
                     </Grid>
-                </Expander>
-            </Grid>
-        </Grid>
 
+                    <!-- Divider -->
+                    <Border Grid.Column="1"
+                            Width="4"
+                            CornerRadius="2"
+                            Background="{StaticResource HeaderGlow}"
+                            Opacity="0.25"
+                            Margin="0,6,0,6"
+                            IsHitTestVisible="False"/>
+
+                    <!-- Right side -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Tracks -->
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="8"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Text="Tracks"
+                                           FontSize="15"
+                                           FontWeight="ExtraBold"/>
+
+                                <Border Grid.Row="1"
+                                        Height="3"
+                                        CornerRadius="2"
+                                        Background="{StaticResource HeaderGlow}"
+                                        Opacity="0.55"
+                                        IsHitTestVisible="False"/>
+                            </Grid>
+
+                            <ListBox x:Name="TracksList"
+                                     Grid.Row="2"/>
+                        </Grid>
+
+                        <!-- Alternatives -->
+                        <Expander x:Name="AlternativesExpander"
+                                  Grid.Row="2"
+                                  Header="Not what you were looking for?"
+                                  IsExpanded="False"
+                                  Margin="0,0,0,0">
+
+                            <Border CornerRadius="16"
+                                    BorderBrush="{StaticResource BorderSoft}"
+                                    BorderThickness="1"
+                                    Background="{StaticResource CardBg2}"
+                                    Padding="12"
+                                    Margin="0,10,0,0">
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button Grid.Column="0"
+                                                Content="Show next 3"
+                                                Width="120"
+                                                Click="ShowNext3_Click"/>
+
+                                        <TextBlock Grid.Column="2"
+                                                   x:Name="AltStatus"
+                                                   VerticalAlignment="Center"
+                                                   Opacity="0.95"
+                                                   TextWrapping="Wrap"/>
+                                    </Grid>
+
+                                    <ListBox x:Name="AlternativesList"
+                                             Grid.Row="2"
+                                             MouseDoubleClick="AlternativesList_DoubleClick">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="12"
+                                                        BorderBrush="#2E3F5A"
+                                                        BorderThickness="1"
+                                                        Background="#0E1420"
+                                                        Padding="10"
+                                                        Margin="0,0,0,10">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Line1}"
+                                                                   FontWeight="ExtraBold"
+                                                                   TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding Line2}"
+                                                                   Opacity="0.85"
+                                                                   TextWrapping="Wrap"
+                                                                   Margin="0,3,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+                                </Grid>
+                            </Border>
+                        </Expander>
+
+                    </Grid>
+                </Grid>
+            </Border>
+
+        </Grid>
     </Grid>
 </Page>
