@@ -8,371 +8,18 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SearchPage">
 
-    <Page.Resources>
-
-        <!-- Brushes -->
-        <SolidColorBrush x:Key="Bg0" Color="#101217"/>
-        <SolidColorBrush x:Key="Bg1" Color="#141A22"/>
-        <SolidColorBrush x:Key="CardBg" Color="#151B24"/>
-        <SolidColorBrush x:Key="CardBg2" Color="#121824"/>
-        <SolidColorBrush x:Key="BorderSoft" Color="#2A3445"/>
-        <SolidColorBrush x:Key="BorderHard" Color="#3A4A63"/>
-        <SolidColorBrush x:Key="TextPrimary" Color="#EAF0FF"/>
-        <SolidColorBrush x:Key="TextSecondary" Color="#B7C3DA"/>
-        <SolidColorBrush x:Key="TextMuted" Color="#8FA0BF"/>
-
-        <SolidColorBrush x:Key="AccentA" Color="#7C4DFF"/>
-        <SolidColorBrush x:Key="AccentB" Color="#00D4FF"/>
-        <SolidColorBrush x:Key="AccentC" Color="#FF3D9A"/>
-
-        <LinearGradientBrush x:Key="HeaderGlow" StartPoint="0,0" EndPoint="1,0">
-            <GradientStop Color="#3A1DFF" Offset="0"/>
-            <GradientStop Color="#008CFF" Offset="0.55"/>
-            <GradientStop Color="#FF2C86" Offset="1"/>
-        </LinearGradientBrush>
-
-        <LinearGradientBrush x:Key="Backdrop" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#0E1117" Offset="0"/>
-            <GradientStop Color="#101927" Offset="0.45"/>
-            <GradientStop Color="#0E1220" Offset="1"/>
-        </LinearGradientBrush>
-
-        <!-- Effects -->
-        <DropShadowEffect x:Key="CardShadow"
-                          Color="#000000"
-                          BlurRadius="18"
-                          ShadowDepth="3"
-                          Opacity="0.55"/>
-
-        <DropShadowEffect x:Key="GlowShadow"
-                          Color="#3A1DFF"
-                          BlurRadius="22"
-                          ShadowDepth="0"
-                          Opacity="0.35"/>
-
-        <!-- Base Typography -->
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
-            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
-        </Style>
-
-        <!-- Inputs -->
-        <Style x:Key="CrispTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Background" Value="#0E1420"/>
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="CaretBrush" Value="{StaticResource AccentB}"/>
-            <Setter Property="SelectionBrush" Value="#553A1DFF"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TextBox}">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"
-                                SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost"
-                                          Margin="0"
-                                          SnapsToDevicePixels="True"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentB}"/>
-                                <Setter TargetName="Bd" Property="BorderThickness" Value="1.5"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.55"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="CrispCheckBoxStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
-        </Style>
-
-        <!-- Buttons -->
-        <Style x:Key="PrimaryButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-            <Setter Property="Background" Value="#1E2A40"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderHard}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,9"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid>
-                            <Border x:Name="Bd"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="11"
-                                    SnapsToDevicePixels="True">
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  RecognizesAccessKey="True"/>
-                            </Border>
-
-                            <!-- subtle top highlight -->
-                            <Border CornerRadius="11"
-                                    Margin="1"
-                                    Opacity="0.22"
-                                    IsHitTestVisible="False">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="#FFFFFF" Offset="0"/>
-                                        <GradientStop Color="#00FFFFFF" Offset="0.75"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
-                        </Grid>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentB}"/>
-                                <Setter TargetName="Bd" Property="Background" Value="#253553"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#16243C"/>
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentA}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.55"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="BackButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Width" Value="44"/>
-            <Setter Property="Height" Value="38"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#141B2A"/>
-        </Style>
-
-        <!-- Cards -->
-        <Style x:Key="CardBorderStyle" TargetType="{x:Type Border}">
-            <Setter Property="Background" Value="{StaticResource CardBg}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="16"/>
-            <Setter Property="Padding" Value="14"/>
-            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-        </Style>
-
-        <!-- Tabs -->
-        <Style x:Key="CrispTabControlStyle" TargetType="{x:Type TabControl}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-        </Style>
-
-        <Style x:Key="CrispTabItemStyle" TargetType="{x:Type TabItem}">
-            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,0,8,0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid>
-                            <Border x:Name="TabPill"
-                                    Background="#0F1520"
-                                    BorderBrush="{StaticResource BorderSoft}"
-                                    BorderThickness="1"
-                                    CornerRadius="14"
-                                    Padding="14,8"
-                                    SnapsToDevicePixels="True">
-                                <ContentPresenter ContentSource="Header"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RecognizesAccessKey="True"/>
-
-                            </Border>
-
-                            <!-- Accent strip when selected -->
-                            <Border x:Name="AccentStrip"
-                                    Height="3"
-                                    VerticalAlignment="Bottom"
-                                    CornerRadius="0,0,14,14"
-                                    Background="{StaticResource HeaderGlow}"
-                                    Opacity="0"
-                                    Margin="6,0,6,2"/>
-                        </Grid>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-                                <Setter TargetName="TabPill" Property="Background" Value="#151E2D"/>
-                                <Setter TargetName="TabPill" Property="BorderBrush" Value="{StaticResource BorderHard}"/>
-                                <Setter TargetName="AccentStrip" Property="Opacity" Value="1"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TabPill" Property="BorderBrush" Value="{StaticResource AccentB}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="TabPill" Property="Opacity" Value="0.55"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- ListView / GridView -->
-        <Style x:Key="CrispListViewStyle" TargetType="{x:Type ListView}">
-            <Setter Property="Background" Value="#0E1420"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="2"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        </Style>
-
-        <Style x:Key="CrispGridViewHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Background" Value="#121B2A"/>
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-        </Style>
-
-        <Style x:Key="CrispListViewItemStyle" TargetType="{x:Type ListViewItem}">
-            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
-            <Setter Property="Padding" Value="4"/>
-            <Setter Property="Margin" Value="0,0,0,2"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                        <Border x:Name="RowBd"
-                                Background="Transparent"
-                                CornerRadius="10"
-                                BorderThickness="1"
-                                BorderBrush="Transparent"
-                                SnapsToDevicePixels="True">
-                            <GridViewRowPresenter />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="RowBd" Property="Background" Value="#1A2436"/>
-                                <Setter TargetName="RowBd" Property="BorderBrush" Value="#2E3F5A"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="RowBd" Property="Background" Value="#223153"/>
-                                <Setter TargetName="RowBd" Property="BorderBrush" Value="{StaticResource AccentB}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="RowBd" Property="Opacity" Value="0.55"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="CrispTabControlTemplateStyle" TargetType="{x:Type TabControl}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabControl}">
-                        <Grid SnapsToDevicePixels="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="10"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Header -->
-                            <TabPanel Grid.Row="0"
-                              IsItemsHost="True"
-                              Margin="0,0,0,0"
-                              KeyboardNavigation.TabIndex="1"/>
-
-                            <!-- Content -->
-                            <Border Grid.Row="2"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            SnapsToDevicePixels="True">
-                                <ContentPresenter ContentSource="SelectedContent"
-                                          Margin="0"
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="CrispGridViewHeaderStyle2" TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource CrispGridViewHeaderStyle}">
-            <Setter Property="Margin" Value="0,0,0,6"/>
-        </Style>
-
-        <Style x:Key="HardTabControlStyle" TargetType="{x:Type TabControl}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabControl}">
-                        <Grid SnapsToDevicePixels="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="10"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Tabs -->
-                            <TabPanel Grid.Row="0"
-                                IsItemsHost="True"
-                                KeyboardNavigation.TabIndex="1"
-                                Margin="0,6,0,6"/>
-
-                            <!-- Selected tab content ONLY -->
-                            <Border Grid.Row="2"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    SnapsToDevicePixels="True">
-                                <ContentPresenter x:Name="PART_SelectedContentHost"
-                                          ContentSource="SelectedContent"
-                                          Margin="0"
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-    </Page.Resources>
-
-    <!-- Backdrop -->
     <Grid Background="{StaticResource Backdrop}">
-        <!-- Decorative layers (no clutter; just depth) -->
-        <Canvas IsHitTestVisible="False" Opacity="0.55">
-            <Ellipse Width="520" Height="520" Canvas.Left="-200" Canvas.Top="-210" Fill="#222B3F"/>
-            <Ellipse Width="420" Height="420" Canvas.Left="520" Canvas.Top="40" Fill="#1B2233"/>
-            <Ellipse Width="650" Height="650" Canvas.Left="140" Canvas.Top="290" Fill="#141A28"/>
-        </Canvas>
+
+        <!-- Background art: scales consistently in fullscreen/windowed -->
+        <Viewbox Stretch="UniformToFill"
+                 IsHitTestVisible="False"
+                 Opacity="0.55">
+            <Canvas Width="1600" Height="900">
+                <Ellipse Width="520" Height="520" Canvas.Left="-180" Canvas.Top="-180" Fill="#222B3F"/>
+                <Ellipse Width="520" Height="520" Canvas.Left="1060" Canvas.Top="40" Fill="#1B2233"/>
+                <Ellipse Width="780" Height="780" Canvas.Left="320" Canvas.Top="430" Fill="#141A28"/>
+            </Canvas>
+        </Viewbox>
 
         <Grid Margin="16">
             <Grid.RowDefinitions>
@@ -382,12 +29,14 @@
             </Grid.RowDefinitions>
 
             <!-- Header Bar -->
-            <Border CornerRadius="18"
-        BorderBrush="{StaticResource BorderSoft}"
-        BorderThickness="1"
-        Background="{StaticResource Bg1}"
-        Padding="14"
-        Effect="{StaticResource CardShadow}">
+            <Border Grid.Row="0"
+                    CornerRadius="18"
+                    BorderBrush="{StaticResource BorderSoft}"
+                    BorderThickness="1"
+                    Background="{StaticResource Bg1}"
+                    Padding="14"
+                    Effect="{StaticResource CardShadow}">
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -403,43 +52,57 @@
                         </Grid.ColumnDefinitions>
 
                         <Button Grid.Column="0"
-                    Style="{StaticResource BackButtonStyle}"
-                    Content="←"
-                    ToolTip="Back"
-                    Click="Back_Click"/>
+                                Style="{StaticResource BackButtonStyle}"
+                                Content="←"
+                                ToolTip="Back"
+                                Click="Back_Click"/>
 
-                        <StackPanel Grid.Column="2" Orientation="Vertical">
-                            <TextBlock Text="Search"
-                           FontSize="22"
-                           FontWeight="ExtraBold"
-                           Margin="0,0,0,2"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="Search"
+                                   FontSize="22"
+                                   FontWeight="ExtraBold"
+                                   VerticalAlignment="Center"/>
 
-                            <TextBlock Text="Find your top songs and albums fast — filters on the left, ranked results on the right."
-                           Foreground="{StaticResource TextMuted}"
-                           FontSize="12"
-                           TextWrapping="Wrap"/>
-                        </StackPanel>
+                        <!-- Colored chip on header (integrated color) -->
+                        <Border Grid.Column="3"
+                                Height="28"
+                                CornerRadius="14"
+                                BorderBrush="{StaticResource BorderSoft}"
+                                BorderThickness="1"
+                                Background="#0E1420"
+                                VerticalAlignment="Center"
+                                Padding="10,0"
+                                Opacity="0.95">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="8" Height="8" Fill="{StaticResource AccentB}" Margin="0,0,8,0"/>
+                                <TextBlock Text="Filters + ranked results"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
                     <Border Grid.Row="1"
-                Height="3"
-                VerticalAlignment="Bottom"
-                CornerRadius="0,0,18,18"
-                Background="{StaticResource HeaderGlow}"
-                Effect="{StaticResource GlowShadow}"
-                Opacity="0.85"
-                IsHitTestVisible="False"/>
+                            Height="3"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="0,0,18,18"
+                            Background="{StaticResource HeaderGlow}"
+                            Effect="{StaticResource GlowShadow}"
+                            Opacity="0.85"
+                            IsHitTestVisible="False"/>
                 </Grid>
             </Border>
 
-            <!-- Tabs -->
             <TabControl Grid.Row="2"
                         Style="{StaticResource HardTabControlStyle}"
                         BorderThickness="0"
                         Background="Transparent"
                         SelectedIndex="0"
                         SnapsToDevicePixels="True"
-                        UseLayoutRounding="True">
+                        UseLayoutRounding="True"
+                        Margin="0,4,0,0">
+
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource CrispTabItemStyle}"/>
                     <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource CrispGridViewHeaderStyle}"/>
@@ -447,7 +110,9 @@
                     <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource CrispListViewItemStyle}"/>
                 </TabControl.Resources>
 
+                <!-- ===================== -->
                 <!-- SONG SEARCH -->
+                <!-- ===================== -->
                 <TabItem Header="Songs" Margin="0">
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
@@ -457,7 +122,8 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Filters Card -->
-                        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                        <Border Grid.Column="0"
+                                Style="{StaticResource CardBorderStyle}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -467,15 +133,25 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Row="0">
-                                    <TextBlock Text="Filters"
+                                <!-- Header with integrated gradient accent -->
+                                <Grid Grid.Row="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="8"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0"
+                                               Text="Filters"
                                                FontWeight="ExtraBold"
                                                FontSize="15"/>
-                                    <TextBlock Text="Tune the query and hit Apply."
-                                               Foreground="{StaticResource TextMuted}"
-                                               FontSize="12"
-                                               Margin="0,2,0,0"/>
-                                </StackPanel>
+
+                                    <Border Grid.Row="1"
+                                            Height="3"
+                                            CornerRadius="2"
+                                            Background="{StaticResource HeaderGlow}"
+                                            Opacity="0.55"
+                                            IsHitTestVisible="False"/>
+                                </Grid>
 
                                 <Border Grid.Row="2"
                                         Height="1"
@@ -483,7 +159,6 @@
                                         Opacity="0.9"/>
 
                                 <StackPanel Grid.Row="3" Margin="0,10,0,0">
-
                                     <TextBlock Text="Min score" Foreground="{StaticResource TextSecondary}"/>
                                     <TextBox Style="{StaticResource CrispTextBoxStyle}"
                                              Text="{Binding SongsMinScoreText, UpdateSourceTrigger=PropertyChanged}"/>
@@ -503,7 +178,6 @@
                                     <TextBlock Text="Notes contain" Foreground="{StaticResource TextSecondary}"/>
                                     <TextBox Style="{StaticResource CrispTextBoxStyle}"
                                              Text="{Binding SongsNotesFilter, UpdateSourceTrigger=PropertyChanged}"/>
-
                                 </StackPanel>
 
                                 <Grid Grid.Row="4" Margin="0,10,0,0">
@@ -528,8 +202,20 @@
                             </Grid>
                         </Border>
 
+                        <!-- Thin colored divider between panels (integrated color) -->
+                        <Border Grid.Column="1"
+                                Width="4"
+                                CornerRadius="2"
+                                Background="{StaticResource HeaderGlow}"
+                                Opacity="0.35"
+                                VerticalAlignment="Stretch"
+                                Margin="0,6,0,6"
+                                IsHitTestVisible="False"/>
+
                         <!-- Results Card -->
-                        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Background="{StaticResource CardBg2}">
+                        <Border Grid.Column="2"
+                                Style="{StaticResource CardBorderStyle}"
+                                Background="{StaticResource CardBg2}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -537,24 +223,33 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
+                                <!-- Header with integrated color -->
                                 <Grid Grid.Row="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <StackPanel>
-                                        <TextBlock Text="Results"
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="8"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0"
+                                                   Text="Results"
                                                    FontWeight="ExtraBold"
                                                    FontSize="15"/>
-                                        <TextBlock Text="Double-click a row to open it."
-                                                   Foreground="{StaticResource TextMuted}"
-                                                   FontSize="12"
-                                                   Margin="0,2,0,0"/>
-                                    </StackPanel>
+
+                                        <Border Grid.Row="1"
+                                                Height="3"
+                                                CornerRadius="2"
+                                                Background="{StaticResource HeaderGlow}"
+                                                Opacity="0.55"
+                                                IsHitTestVisible="False"/>
+                                    </Grid>
 
                                     <Border Grid.Column="1"
-                                            Width="140"
                                             Height="28"
                                             CornerRadius="14"
                                             BorderBrush="{StaticResource BorderSoft}"
@@ -562,11 +257,14 @@
                                             Background="#0E1420"
                                             VerticalAlignment="Center"
                                             Padding="10,0"
-                                            Opacity="0.9">
-                                        <TextBlock Text="Ranked by score"
-                                                   Foreground="{StaticResource TextSecondary}"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="12"/>
+                                            Opacity="0.95">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="{StaticResource AccentC}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="Ranked by score"
+                                                       Foreground="{StaticResource TextSecondary}"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"/>
+                                        </StackPanel>
                                     </Border>
                                 </Grid>
 
@@ -593,7 +291,9 @@
                     </Grid>
                 </TabItem>
 
+                <!-- ===================== -->
                 <!-- ALBUM SEARCH -->
+                <!-- ===================== -->
                 <TabItem Header="Albums" Margin="0">
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
@@ -603,7 +303,8 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Filters Card -->
-                        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                        <Border Grid.Column="0"
+                                Style="{StaticResource CardBorderStyle}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -613,15 +314,24 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Row="0">
-                                    <TextBlock Text="Filters"
+                                <Grid Grid.Row="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="8"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0"
+                                               Text="Filters"
                                                FontWeight="ExtraBold"
                                                FontSize="15"/>
-                                    <TextBlock Text="Conclusion vs computed — dial in either."
-                                               Foreground="{StaticResource TextMuted}"
-                                               FontSize="12"
-                                               Margin="0,2,0,0"/>
-                                </StackPanel>
+
+                                    <Border Grid.Row="1"
+                                            Height="3"
+                                            CornerRadius="2"
+                                            Background="{StaticResource HeaderGlow}"
+                                            Opacity="0.55"
+                                            IsHitTestVisible="False"/>
+                                </Grid>
 
                                 <Border Grid.Row="2"
                                         Height="1"
@@ -629,7 +339,6 @@
                                         Opacity="0.9"/>
 
                                 <StackPanel Grid.Row="3" Margin="0,10,0,0">
-
                                     <TextBlock Text="Min conclusion score" Foreground="{StaticResource TextSecondary}"/>
                                     <TextBox Style="{StaticResource CrispTextBoxStyle}"
                                              Text="{Binding AlbumsMinConclusionScoreText, UpdateSourceTrigger=PropertyChanged}"/>
@@ -641,7 +350,6 @@
                                     <TextBlock Text="Title/artist contains" Foreground="{StaticResource TextSecondary}"/>
                                     <TextBox Style="{StaticResource CrispTextBoxStyle}"
                                              Text="{Binding AlbumsTextFilter, UpdateSourceTrigger=PropertyChanged}"/>
-
                                 </StackPanel>
 
                                 <Grid Grid.Row="4" Margin="0,10,0,0">
@@ -666,8 +374,19 @@
                             </Grid>
                         </Border>
 
+                        <Border Grid.Column="1"
+                                Width="4"
+                                CornerRadius="2"
+                                Background="{StaticResource HeaderGlow}"
+                                Opacity="0.35"
+                                VerticalAlignment="Stretch"
+                                Margin="0,6,0,6"
+                                IsHitTestVisible="False"/>
+
                         <!-- Results Card -->
-                        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Background="{StaticResource CardBg2}">
+                        <Border Grid.Column="2"
+                                Style="{StaticResource CardBorderStyle}"
+                                Background="{StaticResource CardBg2}">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -681,18 +400,26 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <StackPanel>
-                                        <TextBlock Text="Results"
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="8"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0"
+                                                   Text="Results"
                                                    FontWeight="ExtraBold"
                                                    FontSize="15"/>
-                                        <TextBlock Text="Double-click a row to open it."
-                                                   Foreground="{StaticResource TextMuted}"
-                                                   FontSize="12"
-                                                   Margin="0,2,0,0"/>
-                                    </StackPanel>
+
+                                        <Border Grid.Row="1"
+                                                Height="3"
+                                                CornerRadius="2"
+                                                Background="{StaticResource HeaderGlow}"
+                                                Opacity="0.55"
+                                                IsHitTestVisible="False"/>
+                                    </Grid>
 
                                     <Border Grid.Column="1"
-                                            Width="190"
                                             Height="28"
                                             CornerRadius="14"
                                             BorderBrush="{StaticResource BorderSoft}"
@@ -700,11 +427,14 @@
                                             Background="#0E1420"
                                             VerticalAlignment="Center"
                                             Padding="10,0"
-                                            Opacity="0.9">
-                                        <TextBlock Text="Sorted: Conclusion → Computed"
-                                                   Foreground="{StaticResource TextSecondary}"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="12"/>
+                                            Opacity="0.95">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="{StaticResource AccentA}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="Conclusion → Computed"
+                                                       Foreground="{StaticResource TextSecondary}"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="12"/>
+                                        </StackPanel>
                                     </Border>
                                 </Grid>
 
