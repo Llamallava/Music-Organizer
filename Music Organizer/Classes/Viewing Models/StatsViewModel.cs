@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Music_Organizer.Data;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Music_Organizer.Classes.Viewing_Models
 {
@@ -45,13 +46,29 @@ namespace Music_Organizer.Classes.Viewing_Models
             TopAlbumsByComputedScore = new ObservableCollection<RankedAlbumRow>();
             TopSongsByScore = new ObservableCollection<RankedSongRow>();
 
+            TopAlbumsByWords = new ObservableCollection<RankedAlbumWordCountRow>();
+            TopSongsByWords = new ObservableCollection<RankedSongWordCountRow>();
+            TotalWordsWrittenText = "0";
+
             Load();
         }
 
         public ObservableCollection<RankedAlbumRow> TopAlbumsByConclusionScore { get; }
         public ObservableCollection<RankedAlbumRow> TopAlbumsByComputedScore { get; }
         public ObservableCollection<RankedSongRow> TopSongsByScore { get; }
+        public ObservableCollection<RankedAlbumWordCountRow> TopAlbumsByWords { get; }
+        public ObservableCollection<RankedSongWordCountRow> TopSongsByWords { get; }
 
+        private string _totalWordsWrittenText;
+        public string TotalWordsWrittenText
+        {
+            get => _totalWordsWrittenText;
+            private set
+            {
+                _totalWordsWrittenText = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalWordsWrittenText)));
+            }
+        }
         private void Load()
         {
             using var db = new MusicOrganizerDbContext();
@@ -97,6 +114,24 @@ namespace Music_Organizer.Classes.Viewing_Models
                 })
                 .ToList();
 
+            var albumConclusionNotes = db.AlbumConclusions
+                .Select(c => new
+                {
+                    c.AlbumId,
+                    c.Notes
+                })
+                .ToList();
+
+            var trackReviewNotes = db.TrackReviews
+                .Select(r => new
+                {
+                    r.TrackId,
+                    r.AlbumId,
+                    r.Notes,
+                    r.IsInterlude
+                })
+                .ToList();
+
             var albumDisplayById = albums.ToDictionary(
                 a => a.AlbumId,
                 a => a.AlbumTitle + " - " + a.ArtistName
@@ -125,6 +160,14 @@ namespace Music_Organizer.Classes.Viewing_Models
                 bmp.EndInit();
                 bmp.Freeze();
                 return bmp;
+            }
+
+            static int CountWords(string text)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return 0;
+
+                return Regex.Matches(text, @"[\p{L}\p{N}]+").Count;
             }
 
             // 1) Top 10 albums by conclusion score
@@ -238,6 +281,79 @@ namespace Music_Organizer.Classes.Viewing_Models
                     ScoreText = row.Score.ToString("0.##", CultureInfo.InvariantCulture)
                 });
             }
+
+
+            // 4) Top 5 albums by words written (AlbumConclusionEntity.Notes)
+            var topAlbumWords = albumConclusionNotes
+                .Select(x => new
+                {
+                    x.AlbumId,
+                    Words = CountWords(x.Notes)
+                })
+                .OrderByDescending(x => x.Words)
+                .Take(5)
+                .ToList();
+
+            TopAlbumsByWords.Clear();
+
+            for (int i = 0; i < topAlbumWords.Count; i++)
+            {
+                var row = topAlbumWords[i];
+
+                TopAlbumsByWords.Add(new RankedAlbumWordCountRow
+                {
+                    Rank = i + 1,
+                    AlbumId = row.AlbumId,
+                    AlbumDisplay = albumDisplayById.TryGetValue(row.AlbumId, out var display)
+                        ? display
+                        : "Unknown album",
+                    WordCount = row.Words,
+                    WordCountText = row.Words.ToString(CultureInfo.InvariantCulture),
+                    CoverImage = TryLoadCover(row.AlbumId)
+                });
+            }
+
+            // 5) Top 5 songs by words written (TrackReviewEntity.Notes)
+            // I’m excluding interludes here to match your other “top” song stats.
+            var topSongWords = trackReviewNotes
+                .Select(x => new
+                {
+                    x.TrackId,
+                    x.AlbumId,
+                    Words = CountWords(x.Notes)
+                })
+                .OrderByDescending(x => x.Words)
+                .Take(5)
+                .ToList();
+
+            TopSongsByWords.Clear();
+
+            for (int i = 0; i < topSongWords.Count; i++)
+            {
+                var row = topSongWords[i];
+
+                TopSongsByWords.Add(new RankedSongWordCountRow
+                {
+                    Rank = i + 1,
+                    TrackId = row.TrackId,
+                    AlbumId = row.AlbumId,
+                    SongTitle = trackTitleById.TryGetValue(row.TrackId, out var title)
+                        ? title
+                        : "Unknown track",
+                    AlbumDisplay = albumDisplayById.TryGetValue(row.AlbumId, out var display)
+                        ? display
+                        : "Unknown album",
+                    WordCount = row.Words,
+                    WordCountText = row.Words.ToString(CultureInfo.InvariantCulture)
+                });
+            }
+
+            // 6) Grand total words written (album conclusions + track reviews)
+            var totalAlbumWords = albumConclusionNotes.Sum(x => CountWords(x.Notes));
+            var totalSongWords = trackReviewNotes.Sum(x => CountWords(x.Notes));
+
+            TotalWordsWrittenText = (totalAlbumWords + totalSongWords).ToString(CultureInfo.InvariantCulture);
+
         }
     }
 }

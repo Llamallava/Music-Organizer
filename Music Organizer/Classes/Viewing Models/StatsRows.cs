@@ -28,4 +28,25 @@ namespace Music_Organizer.Classes.Viewing_Models
         public double Score { get; init; }
         public string ScoreText { get; init; }
     }
+
+    public sealed class RankedAlbumWordCountRow
+    {
+        public int Rank { get; init; }
+        public Guid AlbumId { get; init; }
+        public string AlbumDisplay { get; init; }
+        public int WordCount { get; init; }
+        public string WordCountText { get; init; }
+        public ImageSource CoverImage { get; init; }
+    }
+
+    public sealed class RankedSongWordCountRow
+    {
+        public int Rank { get; init; }
+        public Guid TrackId { get; init; }
+        public Guid AlbumId { get; init; }
+        public string SongTitle { get; init; }
+        public string AlbumDisplay { get; init; }
+        public int WordCount { get; init; }
+        public string WordCountText { get; init; }
+    }
 }

@@ -43,6 +43,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Two columns for album stats -->
@@ -315,6 +316,170 @@
                             </ListView>
                         </Grid>
                     </Border>
+                    <!-- WORD COUNTS -->
+                    <Grid Grid.Row="2" Margin="0,18,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="18"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Two modules (albums + songs) -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="18"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- LEFT: Top 5 Albums by words -->
+                            <Border Grid.Column="0"
+                Padding="14"
+                CornerRadius="10"
+                Background="#222"
+                BorderBrush="#333"
+                BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0"
+                           Text="Top 5 Albums by words written"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                                    <ListView Grid.Row="1"
+                          ItemsSource="{Binding TopAlbumsByWords}"
+                          BorderThickness="0"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="{x:Type ListViewItem}">
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="Margin" Value="0"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Border Background="Transparent">
+                                                                <GridViewRowPresenter/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" Width="40"
+                                            DisplayMemberBinding="{Binding Rank}" />
+                                                <GridViewColumn Header="Album" Width="320"
+                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
+                                                <GridViewColumn Header="Words" Width="90"
+                                            DisplayMemberBinding="{Binding WordCountText}" />
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </Grid>
+                            </Border>
+
+                            <!-- RIGHT: Top 5 Songs by words -->
+                            <Border Grid.Column="2"
+                Padding="14"
+                CornerRadius="10"
+                Background="#222"
+                BorderBrush="#333"
+                BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0"
+                           Text="Top 5 songs with the most words written"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                                    <ListView Grid.Row="1"
+                          ItemsSource="{Binding TopSongsByWords}"
+                          BorderThickness="0"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="{x:Type ListViewItem}">
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="Margin" Value="0"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Border Background="Transparent">
+                                                                <GridViewRowPresenter/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="#" Width="40"
+                                            DisplayMemberBinding="{Binding Rank}" />
+                                                <GridViewColumn Header="Song" Width="220"
+                                            DisplayMemberBinding="{Binding SongTitle}" />
+                                                <GridViewColumn Header="Album" Width="240"
+                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
+                                                <GridViewColumn Header="Words" Width="90"
+                                            DisplayMemberBinding="{Binding WordCountText}" />
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Grand total module -->
+                        <Border Grid.Row="2"
+            Padding="14"
+            CornerRadius="10"
+            Background="#222"
+            BorderBrush="#333"
+            BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                       Text="Total number of words written (grand total)"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="1"
+                       Text="{Binding TotalWordsWrittenText}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="18,0,0,0"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
                 </Grid>
             </Grid>
         </ScrollViewer>
