@@ -24,5 +24,26 @@ namespace Music_Organizer
             using var db = new MusicOrganizerDbContext();
             db.Database.Migrate();
         }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            try
+            {
+                if (Directory.Exists(AppPaths.TempMusic))
+                {
+                    foreach (var file in Directory.GetFiles(AppPaths.TempMusic))
+                    {
+                        try { File.Delete(file); } catch { }
+                    }
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        
     }
 }

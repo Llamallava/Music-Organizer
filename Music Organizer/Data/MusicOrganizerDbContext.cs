@@ -22,6 +22,7 @@ namespace Music_Organizer.Data
             Directory.CreateDirectory(AppPaths.AppRoot);
             Directory.CreateDirectory(AppPaths.Covers);
             Directory.CreateDirectory(AppPaths.Lyrics);
+            Directory.CreateDirectory(AppPaths.TempMusic);
 
             optionsBuilder.UseSqlite("Data Source=" + AppPaths.Database);
         }

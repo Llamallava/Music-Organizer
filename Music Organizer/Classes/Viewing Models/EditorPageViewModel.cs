@@ -21,6 +21,24 @@ namespace Music_Organizer.Classes
         private System.Threading.CancellationTokenSource _lyricsCts;
         public RelayCommand ToggleInterludeCommand { get; }
 
+        private enum AudioPanelState
+        {
+            Hidden,
+            Prompt,
+            Loading,
+            Ready,
+            Error
+        }
+
+        private AudioPanelState _audioState;
+        private string _audioStatusText;
+        private Uri _audioSource;
+        private string _audioTempFilePath;
+        private System.Threading.CancellationTokenSource _audioCts;
+
+        private readonly ITrackAudioFetcher _audioFetcher;
+
+        public RelayCommand LoadAudioCommand { get; }
 
         public EditorPageViewModel(System.Guid albumId) : this(albumId, new Music_Organizer.Lyrics.DefaultLyricsProvider())
         {
@@ -33,6 +51,12 @@ namespace Music_Organizer.Classes
             ToggleInterludeCommand = new RelayCommand(ToggleInterlude);
 
             _lyricsProvider = lyricsProvider;
+
+            _audioFetcher = new YtDlpTrackAudioFetcher();
+            LoadAudioCommand = new RelayCommand(async () => await LoadAudioForSelectedTabAsync());
+
+            _audioState = AudioPanelState.Hidden;
+            _audioStatusText = "";
 
             LoadAlbumAndTabs(albumId);
         }
@@ -60,6 +84,7 @@ namespace Music_Organizer.Classes
                 OnPropertyChanged(nameof(CanToggleInterlude));
 
                 LoadLyricsForSelectedTab();
+                ResetAudioUiForTab();
             }
         }
 
@@ -364,6 +389,168 @@ namespace Music_Organizer.Classes
             {
                 // Interludes cannot be scored.
                 SelectedTab.ScoreText = "";
+            }
+        }
+
+        public bool CanLoadAudio
+        {
+            get
+            {
+                if (SelectedTab == null)
+                    return false;
+
+                if (SelectedTab.IsConclusion)
+                    return false;
+
+                return _audioState == AudioPanelState.Prompt || _audioState == AudioPanelState.Error;
+            }
+        }
+
+        public bool ShowListenPrompt => _audioState == AudioPanelState.Prompt;
+        public bool ShowAudioLoading => _audioState == AudioPanelState.Loading;
+        public bool ShowAudioPlayer => _audioState == AudioPanelState.Ready;
+        public bool ShowAudioError => _audioState == AudioPanelState.Error;
+
+        public string AudioStatusText
+        {
+            get => _audioStatusText;
+            private set
+            {
+                if (value == _audioStatusText)
+                    return;
+
+                _audioStatusText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string AudioNowPlayingText
+        {
+            get
+            {
+                if (SelectedTab == null || SelectedTab.IsConclusion)
+                    return "";
+
+                return "Ready: " + ArtistName + " — " + SelectedTab.TrackTitle;
+            }
+        }
+
+        public Uri AudioSource
+        {
+            get => _audioSource;
+            private set
+            {
+                if (Equals(value, _audioSource))
+                    return;
+
+                _audioSource = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void RaiseAudioUiChanged()
+        {
+            OnPropertyChanged(nameof(CanLoadAudio));
+            OnPropertyChanged(nameof(ShowListenPrompt));
+            OnPropertyChanged(nameof(ShowAudioLoading));
+            OnPropertyChanged(nameof(ShowAudioPlayer));
+            OnPropertyChanged(nameof(ShowAudioError));
+            OnPropertyChanged(nameof(AudioNowPlayingText));
+        }
+
+        private void ResetAudioUiForTab()
+        {
+            CancelAudioDownload();
+
+            TryDeleteTempAudioFile();
+
+            AudioSource = null;
+            AudioStatusText = "";
+
+            if (SelectedTab == null || SelectedTab.IsConclusion)
+                _audioState = AudioPanelState.Hidden;
+            else
+                _audioState = AudioPanelState.Prompt;
+
+            RaiseAudioUiChanged();
+        }
+
+        private void CancelAudioDownload()
+        {
+            try
+            {
+                _audioCts?.Cancel();
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        private void TryDeleteTempAudioFile()
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(_audioTempFilePath) && File.Exists(_audioTempFilePath))
+                    File.Delete(_audioTempFilePath);
+            }
+            catch
+            {
+                // ignore
+            }
+
+            _audioTempFilePath = null;
+        }
+
+        private async System.Threading.Tasks.Task LoadAudioForSelectedTabAsync()
+        {
+            if (SelectedTab == null)
+                return;
+
+            if (SelectedTab.IsConclusion)
+                return;
+
+            if (string.IsNullOrWhiteSpace(ArtistName) || string.IsNullOrWhiteSpace(SelectedTab.TrackTitle))
+                return;
+
+            CancelAudioDownload();
+            _audioCts = new System.Threading.CancellationTokenSource();
+            var token = _audioCts.Token;
+
+            TryDeleteTempAudioFile();
+
+            _audioState = AudioPanelState.Loading;
+            AudioStatusText = "Fetching audio…";
+            AudioSource = null;
+            RaiseAudioUiChanged();
+
+            try
+            {
+                var path = await _audioFetcher.DownloadAudioAsync(ArtistName, SelectedTab.TrackTitle, token);
+
+                if (token.IsCancellationRequested)
+                    return;
+
+                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                    throw new InvalidOperationException("Audio download did not produce a file.");
+
+                _audioTempFilePath = path;
+                AudioSource = new Uri(path, UriKind.Absolute);
+
+                _audioState = AudioPanelState.Ready;
+                AudioStatusText = "Audio ready.";
+                RaiseAudioUiChanged();
+            }
+            catch (OperationCanceledException)
+            {
+                // ignore
+            }
+            catch
+            {
+                _audioState = AudioPanelState.Error;
+                AudioStatusText = "Could not retrieve audio for this track.";
+                AudioSource = null;
+                RaiseAudioUiChanged();
             }
         }
 

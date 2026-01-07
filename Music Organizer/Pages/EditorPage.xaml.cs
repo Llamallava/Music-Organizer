@@ -29,6 +29,7 @@ namespace Music_Organizer
         {
             NavigationService?.Navigate(new ReviewsPage());
         }
+
         private void SaveExit_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (!TryValidateScore(ScoreBox.Text, out var songScore))
@@ -73,6 +74,29 @@ namespace Music_Organizer
 
             return true;
         }
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            PreviewPlayer?.Play();
+        }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            PreviewPlayer?.Pause();
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            if (PreviewPlayer == null)
+                return;
+
+            PreviewPlayer.Stop();
+        }
+
+        private void PreviewPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            PreviewPlayer?.Stop();
+        }
 
     }
+
 }

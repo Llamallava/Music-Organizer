@@ -7,6 +7,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="EditorPage">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Page.Resources>
 
     <Grid Margin="12" Background="DimGray">
         <Grid.ColumnDefinitions>
@@ -219,24 +222,108 @@
         </Grid>
 
         <!-- RIGHT COLUMN: lyrics placeholder -->
+        <!-- RIGHT COLUMN: lyrics + listen -->
         <Grid Grid.Column="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="8" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Text="Lyrics"
-                       FontSize="16"
-                       FontWeight="SemiBold" />
+               FontSize="16"
+               FontWeight="SemiBold" />
 
             <TextBox Grid.Row="2"
-                     Text="{Binding SelectedTab.Lyrics}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     VerticalScrollBarVisibility="Auto"
-                     FontSize="13" />
+             Text="{Binding SelectedTab.Lyrics}"
+             IsReadOnly="True"
+             AcceptsReturn="True"
+             TextWrapping="Wrap"
+             VerticalScrollBarVisibility="Auto"
+             FontSize="13" />
+
+            <!-- Listen box -->
+            <Border Grid.Row="4"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+            CornerRadius="8"
+            Padding="10">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Listen"
+                       FontWeight="SemiBold"
+                       FontSize="14"/>
+
+                    <!-- Prompt state -->
+                    <StackPanel Grid.Row="2"
+                        Visibility="{Binding ShowListenPrompt, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Want to listen to the song?"
+                           Opacity="0.85"
+                           TextWrapping="Wrap"/>
+                        <Button Content="Retrieve audio"
+                        Margin="0,8,0,0"
+                        Padding="10,4"
+                        Command="{Binding LoadAudioCommand}"
+                        IsEnabled="{Binding CanLoadAudio}"/>
+                    </StackPanel>
+
+                    <!-- Loading state -->
+                    <StackPanel Grid.Row="2"
+                        Visibility="{Binding ShowAudioLoading, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding AudioStatusText}"
+                           Opacity="0.85"
+                           TextWrapping="Wrap"/>
+                        <ProgressBar Height="8"
+                             Margin="0,8,0,0"
+                             IsIndeterminate="True"/>
+                    </StackPanel>
+
+                    <!-- Player state -->
+                    <StackPanel Grid.Row="2"
+                        Visibility="{Binding ShowAudioPlayer, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding AudioNowPlayingText}"
+                           Opacity="0.85"
+                           TextWrapping="Wrap"/>
+
+                        <MediaElement Name="PreviewPlayer"
+                              Margin="0,8,0,0"
+                              LoadedBehavior="Manual"
+                              UnloadedBehavior="Manual"
+                              Source="{Binding AudioSource}"
+                              MediaEnded="PreviewPlayer_MediaEnded"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Button Content="Play" Width="70" Click="Play_Click"/>
+                            <Button Content="Pause" Width="70" Margin="8,0,0,0" Click="Pause_Click"/>
+                            <Button Content="Stop" Width="70" Margin="8,0,0,0" Click="Stop_Click"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding AudioStatusText}"
+                           Margin="0,8,0,0"
+                           Opacity="0.75"
+                           TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <!-- Error state -->
+                    <StackPanel Grid.Row="4"
+                        Visibility="{Binding ShowAudioError, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding AudioStatusText}"
+                           Opacity="0.9"
+                           TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
+
     </Grid>
 </Page>

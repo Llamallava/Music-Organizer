@@ -20,5 +20,8 @@ namespace Music_Organizer
 
         public static string Lyrics =>
             Path.Combine(AppRoot, "Lyrics");
+
+        public static string TempMusic =>
+            Path.Combine(AppRoot, "TempMusic");
     }
 }
