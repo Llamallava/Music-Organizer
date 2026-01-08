@@ -30,5 +30,20 @@ namespace Music_Organizer.Pages
         {
             NavigationService?.Navigate(new MainMenuPage());
         }
+
+        private void BubbleMouseWheelToOuterScroll(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Handled)
+                return;
+
+            var scroller = FindName("OuterScroll") as ScrollViewer;
+            if (scroller == null)
+                return;
+
+            e.Handled = true;
+
+            // Negative delta means scroll down
+            scroller.ScrollToVerticalOffset(scroller.VerticalOffset - e.Delta);
+        }
     }
 }

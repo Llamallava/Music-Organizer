@@ -1,52 +1,166 @@
 ﻿<Page x:Class="Music_Organizer.Pages.StatsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Music_Organizer.Pages"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="StatsPage">
 
-    <Grid>
+    <Page.Resources>
+        <!-- Force white text across this page -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
 
-        <!-- Back button (top-left) -->
+        <!-- Keep ListView readable on dark theme -->
+        <Style TargetType="ListView" BasedOn="{StaticResource CrispListViewStyle}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style TargetType="GridViewColumnHeader" BasedOn="{StaticResource CrispGridViewHeaderStyle}">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Read-only rows: no highlight, no selection behavior -->
+        <Style x:Key="ReadOnlyListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border Background="Transparent">
+                            <GridViewRowPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- A reusable section header style -->
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="ExtraBold"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- Winner card subtitle -->
+        <Style x:Key="WinnerMetaStyle" TargetType="TextBlock">
+            <Setter Property="Opacity" Value="0.92"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource Backdrop}">
+
+        <!-- Consistent background art scaling (visual only) -->
+        <Viewbox Stretch="UniformToFill"
+                 IsHitTestVisible="False"
+                 Opacity="0.30">
+            <Canvas Width="1600" Height="900">
+                <Ellipse Width="560" Height="560" Canvas.Left="-220" Canvas.Top="-240" Fill="#222B3F"/>
+                <Ellipse Width="760" Height="760" Canvas.Left="980" Canvas.Top="-160" Fill="#1B2233"/>
+                <Ellipse Width="980" Height="980" Canvas.Left="280" Canvas.Top="430" Fill="#141A28"/>
+            </Canvas>
+        </Viewbox>
+
+        <!-- Back button stays top-left, above scroll -->
         <Button Name="Back_Button"
-                Content="←"
-                Width="44"
-                Height="34"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Margin="12"
-                Click="Back_Click"
-                ToolTip="Back"
-                Panel.ZIndex="10"/>
+        Style="{StaticResource BackButtonStyle}"
+        Content="←"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Margin="18"
+        Click="Back_Click"
+        ToolTip="Back"
+        Panel.ZIndex="10"/>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer x:Name="OuterScroll"
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              Margin="0,54,0,0">
+
+
             <Grid Margin="18">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header -->
-                <TextBlock Grid.Row="0"
-                           Text="Music Stats"
-                           FontSize="26"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,16"
-                           HorizontalAlignment="Center"/>
+                <!-- Header card -->
+                <Border Grid.Row="0"
+                        CornerRadius="18"
+                        BorderBrush="{StaticResource BorderSoft}"
+                        BorderThickness="1"
+                        Background="{StaticResource Bg1}"
+                        Padding="14"
+                        Effect="{StaticResource CardShadow}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Music Stats"
+                                       FontSize="24"
+                                       FontWeight="ExtraBold"
+                                       VerticalAlignment="Center"/>
+
+                            <Border Grid.Column="1"
+                                    Height="28"
+                                    CornerRadius="14"
+                                    BorderBrush="{StaticResource BorderSoft}"
+                                    BorderThickness="1"
+                                    Background="#0E1420"
+                                    VerticalAlignment="Center"
+                                    Padding="10,0"
+                                    Opacity="0.95">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentA}" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Read-only"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Grid.Row="1"
+                                Height="3"
+                                CornerRadius="2"
+                                Background="{StaticResource HeaderGlow}"
+                                Effect="{StaticResource GlowShadow}"
+                                Opacity="0.80"
+                                IsHitTestVisible="False"/>
+                    </Grid>
+                </Border>
 
                 <!-- Content -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="18"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="18"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Two columns for album stats -->
+                    <!-- ======================= -->
+                    <!-- TOP: Two album stat cards -->
+                    <!-- ======================= -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -56,96 +170,139 @@
 
                         <!-- LEFT: Conclusion score -->
                         <Border Grid.Column="0"
-                                Padding="14"
-                                CornerRadius="10"
-                                Background="#222"
-                                BorderBrush="#333"
-                                BorderThickness="1">
+                                Style="{StaticResource CardBorderStyle}"
+                                Background="{StaticResource CardBg}"
+                                Padding="14">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="12"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0"
-                                           Text="Top 10 Albums by score"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
-                                           Margin="0,0,0,10"/>
+                                <Grid Grid.Row="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="8"/>
+                                    </Grid.RowDefinitions>
 
-                                <!-- #1 winner -->
-                                <Grid Grid.Row="1" Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="96"/>
-                                        <ColumnDefinition Width="12"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Column="0"
-                                            Width="96"
-                                            Height="96"
-                                            CornerRadius="8"
-                                            Background="#111"
-                                            BorderBrush="#333"
-                                            BorderThickness="1"
-                                            ClipToBounds="True">
-                                        <Image Source="{Binding TopConclusionWinner.CoverImage}"
-                                               Stretch="UniformToFill"/>
-                                    </Border>
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}"
+                                                   Text="Top 10 Albums by score"
+                                                   Margin="0,0,0,0"/>
 
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock Text="#1"
-                                                   FontWeight="SemiBold"
-                                                   Opacity="0.9"/>
-                                        <TextBlock Text="{Binding TopConclusionWinner.AlbumDisplay}"
-                                                   FontWeight="SemiBold"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,2,0,4"/>
-                                        <TextBlock Text="{Binding TopConclusionWinner.ScoreText, StringFormat=Score: {0}}"
-                                                   Opacity="0.9"/>
-                                    </StackPanel>
+                                        <Border Grid.Column="1"
+                                                Height="26"
+                                                CornerRadius="13"
+                                                BorderBrush="{StaticResource BorderSoft}"
+                                                BorderThickness="1"
+                                                Background="#0E1420"
+                                                Padding="10,0"
+                                                VerticalAlignment="Center"
+                                                Opacity="0.95">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse Width="8" Height="8" Fill="{StaticResource AccentB}" Margin="0,0,8,0"/>
+                                                <TextBlock Text="Conclusion"
+                                                           FontSize="12"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <Border Grid.Row="1"
+                                            Height="3"
+                                            CornerRadius="2"
+                                            Background="{StaticResource HeaderGlow}"
+                                            Opacity="0.55"
+                                            IsHitTestVisible="False"/>
                                 </Grid>
 
-                                <Separator Grid.Row="2" Opacity="0.25"/>
+                                <!-- Winner card -->
+                                <Border Grid.Row="1"
+                                        CornerRadius="16"
+                                        BorderBrush="{StaticResource BorderSoft}"
+                                        BorderThickness="1"
+                                        Background="{StaticResource CardBg2}"
+                                        Padding="12"
+                                        Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="96"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0"
+                                                Width="96"
+                                                Height="96"
+                                                CornerRadius="12"
+                                                Background="#0E1420"
+                                                BorderBrush="{StaticResource BorderSoft}"
+                                                BorderThickness="1"
+                                                ClipToBounds="True">
+                                            <Image Source="{Binding TopConclusionWinner.CoverImage}"
+                                                   Stretch="UniformToFill"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="#1"
+                                                           FontWeight="ExtraBold"
+                                                           Margin="0,0,10,0"/>
+                                                <Border Height="22"
+                                                        CornerRadius="11"
+                                                        Background="#0E1420"
+                                                        BorderBrush="{StaticResource BorderSoft}"
+                                                        BorderThickness="1"
+                                                        Padding="10,0"
+                                                        Opacity="0.95">
+                                                    <TextBlock Text="{Binding TopConclusionWinner.ScoreText, StringFormat=Score: {0}}"
+                                                               FontWeight="ExtraBold"
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <TextBlock Text="{Binding TopConclusionWinner.AlbumDisplay}"
+                                                       FontWeight="ExtraBold"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,6,0,0"/>
+
+                                            <Border Height="3"
+                                                    CornerRadius="2"
+                                                    Background="{StaticResource HeaderGlow}"
+                                                    Opacity="0.30"
+                                                    Margin="0,10,0,0"
+                                                    IsHitTestVisible="False"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <Separator Grid.Row="2" Opacity="0.20"/>
 
                                 <!-- List -->
                                 <ListView Grid.Row="3"
                                           ItemsSource="{Binding TopAlbumsByConclusionScore}"
                                           BorderThickness="0"
-                                          Margin="0,8,0,0"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListViewItem}">
-                                            <Setter Property="Focusable" Value="False"/>
-                                            <Setter Property="IsHitTestVisible" Value="False"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="Margin" Value="0"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                        <Border Background="Transparent">
-                                                            <GridViewRowPresenter/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-
+                                          Margin="0,10,0,0"
+                                          ItemContainerStyle="{StaticResource ReadOnlyListViewItemStyle}"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          PreviewMouseWheel="BubbleMouseWheelToOuterScroll">
                                     <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="#" Width="40"
-                                                            DisplayMemberBinding="{Binding Rank}" />
-                                            <GridViewColumn Header="Album" Width="320"
-                                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
-                                            <GridViewColumn Header="Score" Width="80"
-                                                            DisplayMemberBinding="{Binding ScoreText}" />
+                                        <GridView ColumnHeaderContainerStyle="{StaticResource CrispGridViewHeaderStyle2}">
+                                            <GridViewColumn Header="#" Width="44"
+                                                            DisplayMemberBinding="{Binding Rank}"/>
+                                            <GridViewColumn Header="Album" Width="340"
+                                                            DisplayMemberBinding="{Binding AlbumDisplay}"/>
+                                            <GridViewColumn Header="Score" Width="90"
+                                                            DisplayMemberBinding="{Binding ScoreText}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -154,100 +311,155 @@
 
                         <!-- RIGHT: Computed score -->
                         <Border Grid.Column="2"
-                                Padding="14"
-                                CornerRadius="10"
-                                Background="#222"
-                                BorderBrush="#333"
-                                BorderThickness="1">
+                                Style="{StaticResource CardBorderStyle}"
+                                Background="{StaticResource CardBg}"
+                                Padding="14">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="12"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0"
-                                           Text="Top 10 Albums by score (computed)"
-                                           FontSize="16"
-                                           FontWeight="SemiBold"
-                                           Margin="0,0,0,10"/>
+                                <Grid Grid.Row="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="8"/>
+                                    </Grid.RowDefinitions>
 
-                                <!-- #1 winner -->
-                                <Grid Grid.Row="1" Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="96"/>
-                                        <ColumnDefinition Width="12"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Column="0"
-                                            Width="96"
-                                            Height="96"
-                                            CornerRadius="8"
-                                            Background="#111"
-                                            BorderBrush="#333"
-                                            BorderThickness="1"
-                                            ClipToBounds="True">
-                                        <Image Source="{Binding TopComputedWinner.CoverImage}"
-                                               Stretch="UniformToFill"/>
-                                    </Border>
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}"
+                                                   Text="Top 10 Albums by score (computed)"
+                                                   Margin="0,0,0,0"/>
 
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock Text="#1"
-                                                   FontWeight="SemiBold"
-                                                   Opacity="0.9"/>
-                                        <TextBlock Text="{Binding TopComputedWinner.AlbumDisplay}"
-                                                   FontWeight="SemiBold"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,2,0,4"/>
-                                        <TextBlock Text="{Binding TopComputedWinner.ScoreText, StringFormat=Score: {0}}"
-                                                   Opacity="0.9"/>
-                                        <TextBlock Text="{Binding TopComputedWinner.TracksUsedText, StringFormat=Tracks used: {0}}"
-                                                   Opacity="0.9"/>
-                                    </StackPanel>
+                                        <Border Grid.Column="1"
+                                                Height="26"
+                                                CornerRadius="13"
+                                                BorderBrush="{StaticResource BorderSoft}"
+                                                BorderThickness="1"
+                                                Background="#0E1420"
+                                                Padding="10,0"
+                                                VerticalAlignment="Center"
+                                                Opacity="0.95">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse Width="8" Height="8" Fill="{StaticResource AccentC}" Margin="0,0,8,0"/>
+                                                <TextBlock Text="Computed"
+                                                           FontSize="12"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <Border Grid.Row="1"
+                                            Height="3"
+                                            CornerRadius="2"
+                                            Background="{StaticResource HeaderGlow}"
+                                            Opacity="0.55"
+                                            IsHitTestVisible="False"/>
                                 </Grid>
 
-                                <Separator Grid.Row="2" Opacity="0.25"/>
+                                <!-- Winner card -->
+                                <Border Grid.Row="1"
+                                        CornerRadius="16"
+                                        BorderBrush="{StaticResource BorderSoft}"
+                                        BorderThickness="1"
+                                        Background="{StaticResource CardBg2}"
+                                        Padding="12"
+                                        Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="96"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0"
+                                                Width="96"
+                                                Height="96"
+                                                CornerRadius="12"
+                                                Background="#0E1420"
+                                                BorderBrush="{StaticResource BorderSoft}"
+                                                BorderThickness="1"
+                                                ClipToBounds="True">
+                                            <Image Source="{Binding TopComputedWinner.CoverImage}"
+                                                   Stretch="UniformToFill"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="#1"
+                                                           FontWeight="ExtraBold"
+                                                           Margin="0,0,10,0"/>
+                                                <Border Height="22"
+                                                        CornerRadius="11"
+                                                        Background="#0E1420"
+                                                        BorderBrush="{StaticResource BorderSoft}"
+                                                        BorderThickness="1"
+                                                        Padding="10,0"
+                                                        Opacity="0.95">
+                                                    <TextBlock Text="{Binding TopComputedWinner.ScoreText, StringFormat=Score: {0}}"
+                                                               FontWeight="ExtraBold"
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <Border Height="22"
+                                                        CornerRadius="11"
+                                                        Background="#0E1420"
+                                                        BorderBrush="{StaticResource BorderSoft}"
+                                                        BorderThickness="1"
+                                                        Padding="10,0"
+                                                        Opacity="0.95"
+                                                        Margin="10,0,0,0">
+                                                    <TextBlock Text="{Binding TopComputedWinner.TracksUsedText, StringFormat=Tracks: {0}}"
+                                                               FontWeight="ExtraBold"
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <TextBlock Text="{Binding TopComputedWinner.AlbumDisplay}"
+                                                       FontWeight="ExtraBold"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,6,0,0"/>
+
+                                            <Border Height="3"
+                                                    CornerRadius="2"
+                                                    Background="{StaticResource HeaderGlow}"
+                                                    Opacity="0.30"
+                                                    Margin="0,10,0,0"
+                                                    IsHitTestVisible="False"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <Separator Grid.Row="2" Opacity="0.20"/>
 
                                 <!-- List -->
                                 <ListView Grid.Row="3"
                                           ItemsSource="{Binding TopAlbumsByComputedScore}"
                                           BorderThickness="0"
-                                          Margin="0,8,0,0"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type ListViewItem}">
-                                            <Setter Property="Focusable" Value="False"/>
-                                            <Setter Property="IsHitTestVisible" Value="False"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="Margin" Value="0"/>
-                                            <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                        <Border Background="Transparent">
-                                                            <GridViewRowPresenter/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-
+                                          Margin="0,10,0,0"
+                                          ItemContainerStyle="{StaticResource ReadOnlyListViewItemStyle}"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          PreviewMouseWheel="BubbleMouseWheelToOuterScroll">
                                     <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="#" Width="40"
-                                                            DisplayMemberBinding="{Binding Rank}" />
+                                        <GridView ColumnHeaderContainerStyle="{StaticResource CrispGridViewHeaderStyle2}">
+                                            <GridViewColumn Header="#" Width="44"
+                                                            DisplayMemberBinding="{Binding Rank}"/>
                                             <GridViewColumn Header="Album" Width="320"
-                                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
-                                            <GridViewColumn Header="Score" Width="80"
-                                                            DisplayMemberBinding="{Binding ScoreText}" />
-                                            <GridViewColumn Header="Tracks used" Width="90"
-                                                            DisplayMemberBinding="{Binding TracksUsedText}" />
+                                                            DisplayMemberBinding="{Binding AlbumDisplay}"/>
+                                            <GridViewColumn Header="Score" Width="90"
+                                                            DisplayMemberBinding="{Binding ScoreText}"/>
+                                            <GridViewColumn Header="Tracks used" Width="100"
+                                                            DisplayMemberBinding="{Binding TracksUsedText}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -255,76 +467,96 @@
                         </Border>
                     </Grid>
 
+                    <!-- ======================= -->
                     <!-- SONGS (full width) -->
-                    <Border Grid.Row="1"
-                            Padding="14"
-                            CornerRadius="10"
-                            Background="#222"
-                            BorderBrush="#333"
-                            BorderThickness="1"
-                            Margin="0,18,0,0">
+                    <!-- ======================= -->
+                    <Border Grid.Row="2"
+                            Style="{StaticResource CardBorderStyle}"
+                            Background="{StaticResource CardBg}"
+                            Padding="14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Text="Top 10 songs by score"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,10"/>
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="8"/>
+                                </Grid.RowDefinitions>
 
-                            <ListView Grid.Row="1"
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}"
+                                               Text="Top 10 songs by score"
+                                               Margin="0,0,0,0"/>
+
+                                    <Border Grid.Column="1"
+                                            Height="26"
+                                            CornerRadius="13"
+                                            BorderBrush="{StaticResource BorderSoft}"
+                                            BorderThickness="1"
+                                            Background="#0E1420"
+                                            Padding="10,0"
+                                            VerticalAlignment="Center"
+                                            Opacity="0.95">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8" Fill="{StaticResource AccentA}" Margin="0,0,8,0"/>
+                                            <TextBlock Text="Songs"
+                                                       FontSize="12"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <Border Grid.Row="1"
+                                        Height="3"
+                                        CornerRadius="2"
+                                        Background="{StaticResource HeaderGlow}"
+                                        Opacity="0.55"
+                                        IsHitTestVisible="False"/>
+                            </Grid>
+
+                            <ListView Grid.Row="2"
                                       ItemsSource="{Binding TopSongsByScore}"
                                       BorderThickness="0"
-                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListViewItem}">
-                                        <Setter Property="Focusable" Value="False"/>
-                                        <Setter Property="IsHitTestVisible" Value="False"/>
-                                        <Setter Property="Padding" Value="0"/>
-                                        <Setter Property="Margin" Value="0"/>
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                    <Border Background="Transparent">
-                                                        <GridViewRowPresenter/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-
+                                      ItemContainerStyle="{StaticResource ReadOnlyListViewItemStyle}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                      PreviewMouseWheel="BubbleMouseWheelToOuterScroll">
                                 <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="#" Width="40"
-                                                        DisplayMemberBinding="{Binding Rank}" />
-                                        <GridViewColumn Header="Song" Width="260"
-                                                        DisplayMemberBinding="{Binding SongTitle}" />
-                                        <GridViewColumn Header="Album" Width="320"
-                                                        DisplayMemberBinding="{Binding AlbumDisplay}" />
-                                        <GridViewColumn Header="Score" Width="80"
-                                                        DisplayMemberBinding="{Binding ScoreText}" />
+                                    <GridView ColumnHeaderContainerStyle="{StaticResource CrispGridViewHeaderStyle2}">
+                                        <GridViewColumn Header="#" Width="44"
+                                                        DisplayMemberBinding="{Binding Rank}"/>
+                                        <GridViewColumn Header="Song" Width="280"
+                                                        DisplayMemberBinding="{Binding SongTitle}"/>
+                                        <GridViewColumn Header="Album" Width="360"
+                                                        DisplayMemberBinding="{Binding AlbumDisplay}"/>
+                                        <GridViewColumn Header="Score" Width="90"
+                                                        DisplayMemberBinding="{Binding ScoreText}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
                         </Grid>
                     </Border>
+
+                    <!-- ======================= -->
                     <!-- WORD COUNTS -->
-                    <Grid Grid.Row="2" Margin="0,18,0,0">
+                    <!-- ======================= -->
+                    <Grid Grid.Row="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="18"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Two modules (albums + songs) -->
+                        <!-- Two modules -->
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -332,118 +564,106 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- LEFT: Top 5 Albums by words -->
+                            <!-- LEFT: Albums by words -->
                             <Border Grid.Column="0"
-                Padding="14"
-                CornerRadius="10"
-                Background="#222"
-                BorderBrush="#333"
-                BorderThickness="1">
+                                    Style="{StaticResource CardBorderStyle}"
+                                    Background="{StaticResource CardBg}"
+                                    Padding="14">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0"
-                           Text="Top 5 Albums by words written"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,10"/>
+                                    <Grid Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="8"/>
+                                        </Grid.RowDefinitions>
 
-                                    <ListView Grid.Row="1"
-                          ItemsSource="{Binding TopAlbumsByWords}"
-                          BorderThickness="0"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="{x:Type ListViewItem}">
-                                                <Setter Property="Focusable" Value="False"/>
-                                                <Setter Property="IsHitTestVisible" Value="False"/>
-                                                <Setter Property="Padding" Value="0"/>
-                                                <Setter Property="Margin" Value="0"/>
-                                                <Setter Property="BorderThickness" Value="0"/>
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                            <Border Background="Transparent">
-                                                                <GridViewRowPresenter/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
+                                        <TextBlock Grid.Row="0"
+                                                   Style="{StaticResource SectionTitleStyle}"
+                                                   Text="Top 5 Albums by words written"
+                                                   Margin="0,0,0,0"/>
 
+                                        <Border Grid.Row="1"
+                                                Height="3"
+                                                CornerRadius="2"
+                                                Background="{StaticResource HeaderGlow}"
+                                                Opacity="0.55"
+                                                IsHitTestVisible="False"/>
+                                    </Grid>
+
+                                    <ListView Grid.Row="2"
+                                              ItemsSource="{Binding TopAlbumsByWords}"
+                                              BorderThickness="0"
+                                              ItemContainerStyle="{StaticResource ReadOnlyListViewItemStyle}"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                              PreviewMouseWheel="BubbleMouseWheelToOuterScroll">
                                         <ListView.View>
-                                            <GridView>
-                                                <GridViewColumn Header="#" Width="40"
-                                            DisplayMemberBinding="{Binding Rank}" />
-                                                <GridViewColumn Header="Album" Width="320"
-                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
-                                                <GridViewColumn Header="Words" Width="90"
-                                            DisplayMemberBinding="{Binding WordCountText}" />
+                                            <GridView ColumnHeaderContainerStyle="{StaticResource CrispGridViewHeaderStyle2}">
+                                                <GridViewColumn Header="#" Width="44"
+                                                                DisplayMemberBinding="{Binding Rank}"/>
+                                                <GridViewColumn Header="Album" Width="360"
+                                                                DisplayMemberBinding="{Binding AlbumDisplay}"/>
+                                                <GridViewColumn Header="Words" Width="100"
+                                                                DisplayMemberBinding="{Binding WordCountText}"/>
                                             </GridView>
                                         </ListView.View>
                                     </ListView>
                                 </Grid>
                             </Border>
 
-                            <!-- RIGHT: Top 5 Songs by words -->
+                            <!-- RIGHT: Songs by words -->
                             <Border Grid.Column="2"
-                Padding="14"
-                CornerRadius="10"
-                Background="#222"
-                BorderBrush="#333"
-                BorderThickness="1">
+                                    Style="{StaticResource CardBorderStyle}"
+                                    Background="{StaticResource CardBg}"
+                                    Padding="14">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0"
-                           Text="Top 5 songs with the most words written"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,10"/>
+                                    <Grid Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="8"/>
+                                        </Grid.RowDefinitions>
 
-                                    <ListView Grid.Row="1"
-                          ItemsSource="{Binding TopSongsByWords}"
-                          BorderThickness="0"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="{x:Type ListViewItem}">
-                                                <Setter Property="Focusable" Value="False"/>
-                                                <Setter Property="IsHitTestVisible" Value="False"/>
-                                                <Setter Property="Padding" Value="0"/>
-                                                <Setter Property="Margin" Value="0"/>
-                                                <Setter Property="BorderThickness" Value="0"/>
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                            <Border Background="Transparent">
-                                                                <GridViewRowPresenter/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
+                                        <TextBlock Grid.Row="0"
+                                                   Style="{StaticResource SectionTitleStyle}"
+                                                   Text="Top 5 songs by words written"
+                                                   Margin="0,0,0,0"/>
 
+                                        <Border Grid.Row="1"
+                                                Height="3"
+                                                CornerRadius="2"
+                                                Background="{StaticResource HeaderGlow}"
+                                                Opacity="0.55"
+                                                IsHitTestVisible="False"/>
+                                    </Grid>
+
+                                    <ListView Grid.Row="2"
+                                              ItemsSource="{Binding TopSongsByWords}"
+                                              BorderThickness="0"
+                                              ItemContainerStyle="{StaticResource ReadOnlyListViewItemStyle}"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                               PreviewMouseWheel="BubbleMouseWheelToOuterScroll">
                                         <ListView.View>
-                                            <GridView>
-                                                <GridViewColumn Header="#" Width="40"
-                                            DisplayMemberBinding="{Binding Rank}" />
-                                                <GridViewColumn Header="Song" Width="220"
-                                            DisplayMemberBinding="{Binding SongTitle}" />
-                                                <GridViewColumn Header="Album" Width="240"
-                                            DisplayMemberBinding="{Binding AlbumDisplay}" />
-                                                <GridViewColumn Header="Words" Width="90"
-                                            DisplayMemberBinding="{Binding WordCountText}" />
+                                            <GridView ColumnHeaderContainerStyle="{StaticResource CrispGridViewHeaderStyle2}">
+                                                <GridViewColumn Header="#" Width="44"
+                                                                DisplayMemberBinding="{Binding Rank}"/>
+                                                <GridViewColumn Header="Song" Width="240"
+                                                                DisplayMemberBinding="{Binding SongTitle}"/>
+                                                <GridViewColumn Header="Album" Width="260"
+                                                                DisplayMemberBinding="{Binding AlbumDisplay}"/>
+                                                <GridViewColumn Header="Words" Width="100"
+                                                                DisplayMemberBinding="{Binding WordCountText}"/>
                                             </GridView>
                                         </ListView.View>
                                     </ListView>
@@ -453,11 +673,9 @@
 
                         <!-- Grand total module -->
                         <Border Grid.Row="2"
-            Padding="14"
-            CornerRadius="10"
-            Background="#222"
-            BorderBrush="#333"
-            BorderThickness="1">
+                                Style="{StaticResource CardBorderStyle}"
+                                Background="{StaticResource CardBg2}"
+                                Padding="14">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -465,22 +683,33 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0"
-                       Text="Total number of words written (grand total)"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
+                                           Text="Total number of words written (grand total)"
+                                           FontSize="16"
+                                           FontWeight="ExtraBold"
+                                           VerticalAlignment="Center"/>
 
-                                <TextBlock Grid.Column="1"
-                       Text="{Binding TotalWordsWrittenText}"
-                       FontSize="18"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"
-                       Margin="18,0,0,0"/>
+                                <Border Grid.Column="1"
+                                        CornerRadius="16"
+                                        BorderBrush="{StaticResource BorderSoft}"
+                                        BorderThickness="1"
+                                        Background="#0E1420"
+                                        Padding="14,8"
+                                        Margin="18,0,0,0"
+                                        Opacity="0.98">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="8" Height="8" Fill="{StaticResource AccentB}" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding TotalWordsWrittenText}"
+                                                   FontSize="18"
+                                                   FontWeight="ExtraBold"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
                             </Grid>
                         </Border>
-                    </Grid>
 
+                    </Grid>
                 </Grid>
+
             </Grid>
         </ScrollViewer>
     </Grid>
