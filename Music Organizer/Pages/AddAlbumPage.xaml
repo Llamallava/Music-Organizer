@@ -47,6 +47,8 @@
         <Style TargetType="Expander">
             <Setter Property="Foreground" Value="White"/>
         </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Page.Resources>
 
     <Grid Background="{StaticResource Backdrop}">
@@ -343,74 +345,107 @@
                                      Grid.Row="2"/>
                         </Grid>
 
-                        <!-- Alternatives -->
-                        <Expander x:Name="AlternativesExpander"
-                                  Grid.Row="2"
-                                  Header="Not what you were looking for?"
-                                  IsExpanded="False"
-                                  Margin="0,0,0,0">
+                        <!-- Alternatives (redesigned) -->
+                        <Border Grid.Row="2"
+        CornerRadius="16"
+        BorderBrush="{StaticResource BorderSoft}"
+        BorderThickness="1"
+        Background="{StaticResource CardBg2}"
+        Padding="12">
 
-                            <Border CornerRadius="16"
-                                    BorderBrush="{StaticResource BorderSoft}"
-                                    BorderThickness="1"
-                                    Background="{StaticResource CardBg2}"
-                                    Padding="12"
-                                    Margin="0,10,0,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="10"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
+                                <!-- Header strip -->
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                    <Grid Grid.Row="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="10"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Didn’t match?"
+                           FontSize="13.5"
+                           FontWeight="ExtraBold"/>
+                                        
+                                    </StackPanel>
 
-                                        <Button Grid.Column="0"
-                                                Content="Show next 3"
-                                                Width="120"
-                                                Click="ShowNext3_Click"/>
+                                    <Button Grid.Column="2"
+                    Content="Next 3"
+                    MinWidth="92"
+                    Padding="12,6"
+                    Click="ShowNext3_Click"/>
 
-                                        <TextBlock Grid.Column="2"
-                                                   x:Name="AltStatus"
-                                                   VerticalAlignment="Center"
-                                                   Opacity="0.95"
-                                                   TextWrapping="Wrap"/>
-                                    </Grid>
+                                    
+                                </Grid>
+
+                                <!-- Status -->
+                                <TextBlock Grid.Row="2"
+                   x:Name="AltStatus"
+                   Opacity="0.95"
+                   TextWrapping="Wrap"/>
+
+                                <!-- Drawer content -->
+                                <Border Grid.Row="4"
+                CornerRadius="14"
+                BorderBrush="{StaticResource BorderSoft}"
+                BorderThickness="1"
+                Background="#0E1420"
+                Padding="10"
+                Visibility="{Binding HasItems, ElementName=AlternativesList, Converter={StaticResource BoolToVis}}">
 
                                     <ListBox x:Name="AlternativesList"
-                                             Grid.Row="2"
-                                             MouseDoubleClick="AlternativesList_DoubleClick">
+                     MouseDoubleClick="AlternativesList_DoubleClick"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     Padding="0">
+
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
                                                 <Border CornerRadius="12"
-                                                        BorderBrush="#2E3F5A"
-                                                        BorderThickness="1"
-                                                        Background="#0E1420"
-                                                        Padding="10"
-                                                        Margin="0,0,0,10">
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding Line1}"
-                                                                   FontWeight="ExtraBold"
-                                                                   TextWrapping="Wrap"/>
-                                                        <TextBlock Text="{Binding Line2}"
-                                                                   Opacity="0.85"
-                                                                   TextWrapping="Wrap"
-                                                                   Margin="0,3,0,0"/>
-                                                    </StackPanel>
+                                BorderBrush="#2E3F5A"
+                                BorderThickness="1"
+                                Background="#0B1220"
+                                Padding="10"
+                                Margin="0,0,0,10">
+
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="10"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="{Binding Line1}"
+                                               FontWeight="ExtraBold"
+                                               TextWrapping="Wrap"/>
+                                                            <TextBlock Text="{Binding Line2}"
+                                               Opacity="0.85"
+                                               TextWrapping="Wrap"
+                                               Margin="0,3,0,0"/>
+                                                        </StackPanel>
+
+                                                        
+                                                    </Grid>
                                                 </Border>
                                             </DataTemplate>
                                         </ListBox.ItemTemplate>
                                     </ListBox>
+                                </Border>
 
-                                </Grid>
-                            </Border>
-                        </Expander>
+                            </Grid>
+                        </Border>
+
 
                     </Grid>
                 </Grid>
